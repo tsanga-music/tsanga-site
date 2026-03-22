@@ -4,13 +4,23 @@ import { useLang } from '../../context/LangContext';
 import { useSectionGlow } from '../../hooks/useSectionGlow';
 import { useAudio } from '../../context/AudioContext';
 
-const SC_BASE = 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/';
+const SC_BASE   = 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/';
 const SC_PARAMS = '&color=%23d4d8f0&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=true';
+
+const LIVE_SET = {
+  url:   'https://soundcloud.com/tsanga-berlin/20260321-live-set-2026-tsanga/s-tuo0lMPjbNw',
+  label: 'Live Set 2026',
+};
 
 const EP = {
   slug: 'sets/a-piece-of-sky-final',
   label: 'EP — A Piece Of Sky',
 };
+
+const EXCLUSIVES = [
+  { url: 'https://soundcloud.com/tsanga-berlin/20260318-virus/s-oQHhq2CjlBM',          label: 'Virus' },
+  { url: 'https://soundcloud.com/tsanga-berlin/20260320-back-and-i-feel-the/s-i9fW3MpEDiT', label: 'Back And I Feel The' },
+];
 
 const SINGLES = [
   { slug: 'my-way-through',                    label: 'My Way Through' },
@@ -25,6 +35,31 @@ const SINGLES = [
 
 function scUrl(slug) {
   return `${SC_BASE}${slug}${SC_PARAMS}`;
+}
+
+function scUrlFull(url) {
+  return `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}${SC_PARAMS}`;
+}
+
+/* ── Label de section (EP / LIVE SET / EXCLUSIFS / SINGLES) ─────── */
+function SectionLabel({ children, mt = false }) {
+  return (
+    <motion.p
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      style={{
+        fontSize: '0.65rem',
+        letterSpacing: '0.1em',
+        color: 'rgba(255,255,255,0.3)',
+        marginTop: mt ? '3rem' : 0,
+        marginBottom: '1rem',
+      }}
+    >
+      {children}
+    </motion.p>
+  );
 }
 
 /* ── Embed EP (grand player visuel) ──────────────────────────────── */
@@ -87,6 +122,91 @@ function SingleEmbed({ track, index }) {
         src={scUrl(track.slug)}
         style={{ display: 'block', borderRadius: 6 }}
       />
+    </motion.div>
+  );
+}
+
+/* ── Embed Live Set (grand player, même style que EP) ────────────── */
+function LiveSetEmbed({ liveSet }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 40 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        borderRadius: 6,
+        overflow: 'hidden',
+        border: '1px solid rgba(255,255,255,0.07)',
+        background: 'rgba(255,255,255,0.02)',
+      }}
+    >
+      <iframe
+        title={liveSet.label}
+        width="100%"
+        height="450"
+        scrolling="no"
+        frameBorder="no"
+        allow="autoplay"
+        src={scUrlFull(liveSet.url)}
+        style={{ display: 'block', borderRadius: 6 }}
+      />
+    </motion.div>
+  );
+}
+
+/* ── Embed exclusif (compact + badge) ────────────────────────────── */
+function ExclusiveEmbed({ track, index }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      style={{ position: 'relative' }}
+    >
+      {/* Badge Exclusif */}
+      <div style={{
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        zIndex: 10,
+        padding: '3px 9px',
+        background: 'rgba(255,40,90,0.85)',
+        borderRadius: 3,
+        fontSize: '0.58rem',
+        fontWeight: 700,
+        letterSpacing: '0.1em',
+        color: '#fff',
+        pointerEvents: 'none',
+        backdropFilter: 'blur(6px)',
+        boxShadow: '0 0 12px rgba(255,40,90,0.5)',
+      }}>
+        EXCLUSIF
+      </div>
+      <div style={{
+        borderRadius: 6,
+        overflow: 'hidden',
+        border: '1px solid rgba(255,40,90,0.2)',
+        background: 'rgba(255,255,255,0.015)',
+      }}>
+        <iframe
+          title={track.label}
+          width="100%"
+          height="166"
+          scrolling="no"
+          frameBorder="no"
+          allow="autoplay"
+          src={scUrlFull(track.url)}
+          style={{ display: 'block', borderRadius: 6 }}
+        />
+      </div>
     </motion.div>
   );
 }
@@ -204,41 +324,28 @@ export default function Music() {
         </motion.p>
       </div>
 
-      {/* ── EP en grand ────────────────────────────────────────────── */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        style={{
-          fontSize: '0.65rem',
-          letterSpacing: '0.1em',
-          color: 'rgba(255,255,255,0.3)',
-          marginBottom: '1rem',
-        }}
-      >
-        EP
-      </motion.p>
+      {/* ── Live Set ────────────────────────────────────────────────── */}
+      <SectionLabel>LIVE SET 2026</SectionLabel>
+      <LiveSetEmbed liveSet={LIVE_SET} />
 
+      {/* ── EP en grand ────────────────────────────────────────────── */}
+      <SectionLabel mt>EP</SectionLabel>
       <EpEmbed ep={EP} index={0} />
 
-      {/* ── Singles ────────────────────────────────────────────────── */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        style={{
-          fontSize: '0.65rem',
-          letterSpacing: '0.1em',
-          color: 'rgba(255,255,255,0.3)',
-          marginTop: '3rem',
-          marginBottom: '1rem',
-        }}
-      >
-        SINGLES
-      </motion.p>
+      {/* ── Exclusifs ───────────────────────────────────────────────── */}
+      <SectionLabel mt>EXCLUSIFS</SectionLabel>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+        gap: '1rem',
+      }}>
+        {EXCLUSIVES.map((track, i) => (
+          <ExclusiveEmbed key={track.url} track={track} index={i} />
+        ))}
+      </div>
 
+      {/* ── Singles ────────────────────────────────────────────────── */}
+      <SectionLabel mt>SINGLES</SectionLabel>
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
