@@ -12,7 +12,11 @@ import { useAudio } from '../../context/AudioContext';
 const SC_PARAMS = '&color=%23d4d8f0&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false';
 
 function scUrl(path, visual = false) {
-  return `https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/tsanga-berlin/${path}${SC_PARAMS}&visual=${visual}`;
+  // Tracks privées : path contient "/s-XXXXX" → extrait en &secret_token=
+  const tokenMatch = path.match(/\/s-([A-Za-z0-9]+)$/);
+  const cleanPath  = tokenMatch ? path.slice(0, path.lastIndexOf('/s-')) : path;
+  const tokenParam = tokenMatch ? `&secret_token=s-${tokenMatch[1]}` : '';
+  return `https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/tsanga-berlin/${cleanPath}${tokenParam}${SC_PARAMS}&visual=${visual}`;
 }
 
 /* ── Données ─────────────────────────────────────────────────────── */
