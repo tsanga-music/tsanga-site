@@ -4,47 +4,34 @@ import { useLang } from '../../context/LangContext';
 import { useSectionGlow } from '../../hooks/useSectionGlow';
 import { useAudio } from '../../context/AudioContext';
 
-const SC_TRACK_BASE = 'https://soundcloud.com/tsanga-berlin/';
-const SC_PLAYER     = 'https://w.soundcloud.com/player/?url=';
-const SC_PARAMS     = '&color=%23d4d8f0&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=true';
+/* ── URLs SoundCloud — littérales, aucun encodage ────────────────── */
+const LIVE_SET_SRC = 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/20260321-live-set-2026-tsanga/s-tuo0lMPjbNw&visual=true&auto_play=false';
 
-const LIVE_SET = {
-  url:   'https://soundcloud.com/tsanga-berlin/20260321-live-set-2026-tsanga/s-tuo0lMPjbNw',
-  label: 'Live Set 2026',
-};
-
-const EP = {
-  slug: 'sets/a-piece-of-sky-final',
-  label: 'EP — A Piece Of Sky',
-};
+const EP_SRC = 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/sets/a-piece-of-sky-final&visual=true&auto_play=false';
 
 const EXCLUSIVES = [
-  { url: 'https://soundcloud.com/tsanga-berlin/20260318-virus/s-oQHhq2CjlBM',          label: 'Virus' },
-  { url: 'https://soundcloud.com/tsanga-berlin/20260320-back-and-i-feel-the/s-i9fW3MpEDiT', label: 'Back And I Feel The' },
+  {
+    label: 'Virus',
+    src: 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/20260318-virus/s-oQHhq2CjlBM&visual=true&auto_play=false',
+  },
+  {
+    label: 'Back And I Feel The',
+    src: 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/20260320-back-and-i-feel-the/s-i9fW3MpEDiT&visual=true&auto_play=false',
+  },
 ];
 
 const SINGLES = [
-  { slug: 'my-way-through',                    label: 'My Way Through' },
-  { slug: 'tsanga-none-of-this-shit-2',        label: 'None Of This Shit' },
-  { slug: 'tsanga-reason-mst-final2-1',        label: 'Reason' },
-  { slug: 'tsanga-voidy-inside-mst-1',         label: 'Voidy Inside' },
-  { slug: 'tsanga-pink-truck-mst-final2-1',    label: 'Pink Truck' },
-  { slug: 'tsanga-lost-my-way-mst-1',          label: 'Lost My Way' },
-  { slug: 'tsanga-darker-days-mst-1',          label: 'Darker Days' },
-  { slug: 'tsanga-voidy-inside-jean-1',        label: 'Voidy Inside (Jean remix)' },
+  { label: 'My Way Through',           src: 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/my-way-through&visual=true&auto_play=false' },
+  { label: 'None Of This Shit',        src: 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/tsanga-none-of-this-shit-2&visual=true&auto_play=false' },
+  { label: 'Reason',                   src: 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/tsanga-reason-mst-final2-1&visual=true&auto_play=false' },
+  { label: 'Voidy Inside',             src: 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/tsanga-voidy-inside-mst-1&visual=true&auto_play=false' },
+  { label: 'Pink Truck',               src: 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/tsanga-pink-truck-mst-final2-1&visual=true&auto_play=false' },
+  { label: 'Lost My Way',              src: 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/tsanga-lost-my-way-mst-1&visual=true&auto_play=false' },
+  { label: 'Darker Days',              src: 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/tsanga-darker-days-mst-1&visual=true&auto_play=false' },
+  { label: 'Voidy Inside (Jean remix)',src: 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/tsanga-voidy-inside-jean-1&visual=true&auto_play=false' },
 ];
 
-/* slug  → URL encodée (tracks publics) */
-function scUrl(slug) {
-  return `${SC_PLAYER}${encodeURIComponent(SC_TRACK_BASE + slug)}${SC_PARAMS}`;
-}
-
-/* URL complète avec token privé → URL encodée */
-function scUrlFull(url) {
-  return `${SC_PLAYER}${encodeURIComponent(url)}${SC_PARAMS}`;
-}
-
-/* ── Label de section (EP / LIVE SET / EXCLUSIFS / SINGLES) ─────── */
+/* ── Label de section ─────────────────────────────────────────────── */
 function SectionLabel({ children, mt = false }) {
   return (
     <motion.p
@@ -65,72 +52,8 @@ function SectionLabel({ children, mt = false }) {
   );
 }
 
-/* ── Embed EP (grand player visuel) ──────────────────────────────── */
-function EpEmbed({ ep, index }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.9, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
-      style={{
-        borderRadius: 6,
-        overflow: 'hidden',
-        border: '1px solid rgba(255,255,255,0.07)',
-        background: 'rgba(255,255,255,0.02)',
-      }}
-    >
-      <iframe
-        title={ep.label}
-        width="100%"
-        height="450"
-        scrolling="no"
-        frameBorder="no"
-        allow="autoplay"
-        src={scUrl(ep.slug)}
-        style={{ display: 'block', borderRadius: 6 }}
-      />
-    </motion.div>
-  );
-}
-
-/* ── Embed single (player compact) ───────────────────────────────── */
-function SingleEmbed({ track, index }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay: (index % 4) * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      style={{
-        borderRadius: 6,
-        overflow: 'hidden',
-        border: '1px solid rgba(255,255,255,0.06)',
-        background: 'rgba(255,255,255,0.015)',
-      }}
-    >
-      <iframe
-        title={track.label}
-        width="100%"
-        height="166"
-        scrolling="no"
-        frameBorder="no"
-        allow="autoplay"
-        src={scUrl(track.slug)}
-        style={{ display: 'block', borderRadius: 6 }}
-      />
-    </motion.div>
-  );
-}
-
-/* ── Embed Live Set (grand player, même style que EP) ────────────── */
-function LiveSetEmbed({ liveSet }) {
+/* ── Grand embed (450px) ──────────────────────────────────────────── */
+function LargeEmbed({ src, label }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
 
@@ -148,21 +71,53 @@ function LiveSetEmbed({ liveSet }) {
       }}
     >
       <iframe
-        title={liveSet.label}
+        title={label}
         width="100%"
         height="450"
         scrolling="no"
         frameBorder="no"
         allow="autoplay"
-        src={scUrlFull(liveSet.url)}
-        style={{ display: 'block', borderRadius: 6 }}
+        src={src}
+        style={{ display: 'block' }}
       />
     </motion.div>
   );
 }
 
-/* ── Embed exclusif (compact + badge) ────────────────────────────── */
-function ExclusiveEmbed({ track, index }) {
+/* ── Embed compact (166px) ────────────────────────────────────────── */
+function SmallEmbed({ src, label, index }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, delay: (index % 4) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        borderRadius: 6,
+        overflow: 'hidden',
+        border: '1px solid rgba(255,255,255,0.06)',
+        background: 'rgba(255,255,255,0.015)',
+      }}
+    >
+      <iframe
+        title={label}
+        width="100%"
+        height="166"
+        scrolling="no"
+        frameBorder="no"
+        allow="autoplay"
+        src={src}
+        style={{ display: 'block' }}
+      />
+    </motion.div>
+  );
+}
+
+/* ── Embed exclusif (166px + badge) ──────────────────────────────── */
+function ExclusiveEmbed({ src, label, index }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
 
@@ -174,7 +129,6 @@ function ExclusiveEmbed({ track, index }) {
       transition={{ duration: 0.7, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
       style={{ position: 'relative' }}
     >
-      {/* Badge Exclusif */}
       <div style={{
         position: 'absolute',
         top: 10,
@@ -200,14 +154,14 @@ function ExclusiveEmbed({ track, index }) {
         background: 'rgba(255,255,255,0.015)',
       }}>
         <iframe
-          title={track.label}
+          title={label}
           width="100%"
           height="166"
           scrolling="no"
           frameBorder="no"
           allow="autoplay"
-          src={scUrlFull(track.url)}
-          style={{ display: 'block', borderRadius: 6 }}
+          src={src}
+          style={{ display: 'block' }}
         />
       </div>
     </motion.div>
@@ -327,15 +281,15 @@ export default function Music() {
         </motion.p>
       </div>
 
-      {/* ── Live Set ────────────────────────────────────────────────── */}
+      {/* ── Live Set ─────────────────────────────────────────────────── */}
       <SectionLabel>LIVE SET 2026</SectionLabel>
-      <LiveSetEmbed liveSet={LIVE_SET} />
+      <LargeEmbed src={LIVE_SET_SRC} label="Live Set 2026" />
 
-      {/* ── EP en grand ────────────────────────────────────────────── */}
+      {/* ── EP ───────────────────────────────────────────────────────── */}
       <SectionLabel mt>EP</SectionLabel>
-      <EpEmbed ep={EP} index={0} />
+      <LargeEmbed src={EP_SRC} label="EP — A Piece Of Sky" />
 
-      {/* ── Exclusifs ───────────────────────────────────────────────── */}
+      {/* ── Exclusifs ────────────────────────────────────────────────── */}
       <SectionLabel mt>EXCLUSIFS</SectionLabel>
       <div style={{
         display: 'grid',
@@ -343,11 +297,11 @@ export default function Music() {
         gap: '1rem',
       }}>
         {EXCLUSIVES.map((track, i) => (
-          <ExclusiveEmbed key={track.url} track={track} index={i} />
+          <ExclusiveEmbed key={track.label} src={track.src} label={track.label} index={i} />
         ))}
       </div>
 
-      {/* ── Singles ────────────────────────────────────────────────── */}
+      {/* ── Singles ──────────────────────────────────────────────────── */}
       <SectionLabel mt>SINGLES</SectionLabel>
       <div style={{
         display: 'grid',
@@ -355,7 +309,7 @@ export default function Music() {
         gap: '1rem',
       }}>
         {SINGLES.map((track, i) => (
-          <SingleEmbed key={track.slug} track={track} index={i} />
+          <SmallEmbed key={track.label} src={track.src} label={track.label} index={i} />
         ))}
       </div>
     </section>
