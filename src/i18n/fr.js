@@ -1,0 +1,73 @@
+const fr = {
+  nav: {
+    gallery: 'Galerie',
+    music: 'Musique',
+    shop: 'Shop',
+    lives: 'Lives',
+    contact: 'Contact',
+  },
+  hero: {
+    tagline: 'Architecte du vide sonore',
+    sub: 'Electro Darkwave · Bruxelles',
+    cta: 'Écouter',
+    scroll: 'Défiler',
+  },
+  gallery: {
+    title: 'Galerie',
+    subtitle: 'Fragments visuels',
+  },
+  music: {
+    title: 'Musique',
+    subtitle: 'Discographie',
+    listen: 'Écouter',
+    releases: [
+      { title: 'Cendres', year: '2024', type: 'Album', tracks: 10 },
+      { title: 'Fractures', year: '2023', type: 'EP', tracks: 5 },
+      { title: 'Abysses', year: '2022', type: 'Single', tracks: 1 },
+      { title: 'Nuit Blanche', year: '2021', type: 'Album', tracks: 12 },
+    ],
+  },
+  shop: {
+    title: 'Shop',
+    subtitle: 'Objets & Reliques',
+    addToCart: 'Ajouter',
+    cart: 'Panier',
+    total: 'Total',
+    checkout: 'Commander',
+    empty: 'Votre panier est vide',
+    items: [
+      { id: 1, name: 'Vinyle "Cendres"', price: 28, type: 'Vinyl' },
+      { id: 2, name: 'T-Shirt TSANGA', price: 35, type: 'Apparel' },
+      { id: 3, name: 'Patch brodé', price: 12, type: 'Accessoire' },
+      { id: 4, name: 'Cassette "Fractures"', price: 15, type: 'Cassette' },
+      { id: 5, name: 'Poster A2', price: 20, type: 'Print' },
+      { id: 6, name: 'Bundle Collector', price: 75, type: 'Bundle' },
+    ],
+  },
+  lives: {
+    title: 'Lives',
+    subtitle: 'Dates & Tournées',
+    book: 'Réserver',
+    dates: [
+      { city: 'Bruxelles', venue: 'Ancienne Belgique', date: '14 Avr 2026', status: 'on sale' },
+      { city: 'Paris', venue: 'La Maroquinerie', date: '22 Avr 2026', status: 'on sale' },
+      { city: 'Berlin', venue: 'Berghain Kantine', date: '08 Mai 2026', status: 'sold out' },
+      { city: 'Amsterdam', venue: 'Paradiso', date: '15 Mai 2026', status: 'on sale' },
+      { city: 'Londres', venue: 'Fabric', date: '28 Mai 2026', status: 'on sale' },
+      { city: 'Cologne', venue: 'Gebäude 9', date: '06 Juin 2026', status: 'annoncé' },
+    ],
+  },
+  contact: {
+    title: 'Contact',
+    subtitle: 'Management & Presse',
+    name: 'Nom',
+    email: 'Email',
+    message: 'Message',
+    send: 'Envoyer',
+    booking: 'Booking',
+    press: 'Presse',
+    management: 'Management',
+  },
+};
+
+export default fr;

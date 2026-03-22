@@ -1,0 +1,91 @@
+/* ── Berliner Condensed — police unique du site ────────────────────── */
+@font-face {
+  font-family: 'Berliner Condensed';
+  src: url('./assets/fonts/berliner-condensed.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* Berliner Condensed partout — écrase tous les fontFamily inline */
+  font-family: 'Berliner Condensed', 'Arial Narrow', sans-serif !important;
+  /* Annule tous les textTransform: uppercase des composants inline */
+  text-transform: none !important;
+  /* Berliner Condensed est déjà condensé — letterSpacing sobre */
+  letter-spacing: 0.04em !important;
+}
+
+:root {
+  --bg:         #04040a;
+  --glow-blue:  #4a8fff;
+  --glow-red:   #ff3060;
+  --text:       #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  cursor: none;
+  overflow-x: hidden;
+}
+
+/* ── Glow cycle sur tous les boutons et liens au hover ─────────────── */
+@keyframes btn-glow-cycle {
+  0%   { filter: drop-shadow(0 0 5px rgba(74,143,255,0.9))  drop-shadow(0 0 10px rgba(74,143,255,0.4));  }
+  25%  { filter: drop-shadow(0 0 5px rgba(140,60,255,0.9))  drop-shadow(0 0 10px rgba(140,60,255,0.4));  }
+  50%  { filter: drop-shadow(0 0 5px rgba(255,40,90,0.9))   drop-shadow(0 0 10px rgba(255,40,90,0.4));   }
+  75%  { filter: drop-shadow(0 0 5px rgba(40,210,255,0.9))  drop-shadow(0 0 10px rgba(40,210,255,0.4));  }
+  100% { filter: drop-shadow(0 0 5px rgba(74,143,255,0.9))  drop-shadow(0 0 10px rgba(74,143,255,0.4));  }
+}
+button:hover, a:hover {
+  animation: btn-glow-cycle 3s linear infinite !important;
+}
+
+/* ── Logo navbar : cycle chromatique au hover ──────────────────────── */
+@keyframes nav-logo-cycle {
+  0%   { filter: brightness(1.3) sepia(0.5) saturate(8) hue-rotate(192deg); }
+  25%  { filter: brightness(1.3) sepia(0.5) saturate(8) hue-rotate(260deg); }
+  50%  { filter: brightness(1.3) sepia(0.5) saturate(8) hue-rotate(330deg); }
+  75%  { filter: brightness(1.3) sepia(0.5) saturate(8) hue-rotate(150deg); }
+  100% { filter: brightness(1.3) sepia(0.5) saturate(8) hue-rotate(192deg); }
+}
+.nav-logo {
+  filter: brightness(1);
+  transition: filter 0.4s;
+}
+.nav-logo:hover {
+  animation: nav-logo-cycle 3s linear infinite;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+::selection { background: rgba(255,255,255,0.15); color: #fff; }
+
+/* ── Range input ───────────────────────────────────────────────────── */
+input[type="range"] { appearance: none; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.12); outline: none; }
+input[type="range"]::-webkit-slider-thumb { appearance: none; width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.7); cursor: none; }
+
+/* ── Cursor ────────────────────────────────────────────────────────── */
+*, a, button, input, textarea, select { cursor: none !important; }
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .desktop-nav     { display: none !important; }
+  .mobile-menu-btn { display: flex !important; }
+  .contact-grid    { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 600px) { input[type="range"] { display: none; } }
