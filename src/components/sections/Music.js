@@ -4,8 +4,9 @@ import { useLang } from '../../context/LangContext';
 import { useSectionGlow } from '../../hooks/useSectionGlow';
 import { useAudio } from '../../context/AudioContext';
 
-const SC_BASE   = 'https://w.soundcloud.com/player/?url=https://soundcloud.com/tsanga-berlin/';
-const SC_PARAMS = '&color=%23d4d8f0&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=true';
+const SC_TRACK_BASE = 'https://soundcloud.com/tsanga-berlin/';
+const SC_PLAYER     = 'https://w.soundcloud.com/player/?url=';
+const SC_PARAMS     = '&color=%23d4d8f0&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=true';
 
 const LIVE_SET = {
   url:   'https://soundcloud.com/tsanga-berlin/20260321-live-set-2026-tsanga/s-tuo0lMPjbNw',
@@ -33,12 +34,14 @@ const SINGLES = [
   { slug: 'tsanga-voidy-inside-jean-1',        label: 'Voidy Inside (Jean remix)' },
 ];
 
+/* slug  → URL encodée (tracks publics) */
 function scUrl(slug) {
-  return `${SC_BASE}${slug}${SC_PARAMS}`;
+  return `${SC_PLAYER}${encodeURIComponent(SC_TRACK_BASE + slug)}${SC_PARAMS}`;
 }
 
+/* URL complète avec token privé → URL encodée */
 function scUrlFull(url) {
-  return `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}${SC_PARAMS}`;
+  return `${SC_PLAYER}${encodeURIComponent(url)}${SC_PARAMS}`;
 }
 
 /* ── Label de section (EP / LIVE SET / EXCLUSIFS / SINGLES) ─────── */
