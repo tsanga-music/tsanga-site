@@ -49,12 +49,7 @@ const de = {
     subtitle: 'Termine & Tourneen',
     book: 'Tickets',
     dates: [
-      { city: 'Brüssel', venue: 'Ancienne Belgique', date: '14. Apr 2026', status: 'on sale' },
-      { city: 'Paris', venue: 'La Maroquinerie', date: '22. Apr 2026', status: 'on sale' },
-      { city: 'Berlin', venue: 'Berghain Kantine', date: '8. Mai 2026', status: 'sold out' },
-      { city: 'Amsterdam', venue: 'Paradiso', date: '15. Mai 2026', status: 'on sale' },
-      { city: 'London', venue: 'Fabric', date: '28. Mai 2026', status: 'on sale' },
-      { city: 'Köln', venue: 'Gebäude 9', date: '6. Jun 2026', status: 'angekündigt' },
+      { city: 'Paris, FR', venue: 'La Mécanique Ondulatoire', date: '8 (TBC)', status: 'angekündigt' },
     ],
   },
   contact: {
