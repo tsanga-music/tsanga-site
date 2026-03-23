@@ -1,8 +1,9 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useLang } from '../../context/LangContext';
 import { useSectionGlow } from '../../hooks/useSectionGlow';
 import { useAudio } from '../../context/AudioContext';
+import pochetteSrc from '../../assets/pochette-back-transparent.png';
 
 /* ── Constructeur d'URL SoundCloud ───────────────────────────────────
    Seul le ":" de https: est encodé en %3A, les "/" restent lisibles.
@@ -176,6 +177,83 @@ function ExclusiveEmbed({ item, index }) {
   );
 }
 
+/* ── Pochette arrière EP avec lueur et lévitation ────────────────── */
+function PochetteBack() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+      style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.5rem' }}
+    >
+      {/* Conteneur relatif pour les lueurs */}
+      <div
+        style={{ position: 'relative', display: 'inline-block' }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {/* Lueur bleue derrière */}
+        <motion.div
+          animate={{
+            opacity: hovered ? [0.6, 1, 0.6] : [0.25, 0.5, 0.25],
+            scale:   hovered ? [1.05, 1.18, 1.05] : [1, 1.1, 1],
+          }}
+          transition={{ duration: hovered ? 1.8 : 3.5, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            position: 'absolute',
+            inset: '-18%',
+            borderRadius: '50%',
+            background: 'radial-gradient(ellipse, rgba(74,143,255,0.55) 0%, transparent 70%)',
+            filter: 'blur(28px)',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        />
+        {/* Lueur rouge/rose derrière (décalée dans le temps) */}
+        <motion.div
+          animate={{
+            opacity: hovered ? [0.5, 0.9, 0.5] : [0.15, 0.35, 0.15],
+            scale:   hovered ? [1.1, 1.22, 1.1] : [1.05, 1.15, 1.05],
+          }}
+          transition={{ duration: hovered ? 2.2 : 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
+          style={{
+            position: 'absolute',
+            inset: '-14%',
+            borderRadius: '50%',
+            background: 'radial-gradient(ellipse, rgba(255,40,90,0.45) 0%, transparent 70%)',
+            filter: 'blur(32px)',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        />
+        {/* Image avec lévitation douce */}
+        <motion.img
+          src={pochetteSrc}
+          alt="EP A Piece Of Sky — pochette arrière"
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            width: 'clamp(220px, 30vw, 380px)',
+            height: 'auto',
+            display: 'block',
+            filter: hovered
+              ? 'drop-shadow(0 0 18px rgba(74,143,255,0.7)) drop-shadow(0 0 36px rgba(255,40,90,0.4))'
+              : 'drop-shadow(0 4px 20px rgba(0,0,0,0.6))',
+            transition: 'filter 0.4s ease',
+          }}
+        />
+      </div>
+    </motion.div>
+  );
+}
+
 /* ── SC Widget API bridge ────────────────────────────────────────── */
 function useSCWidgetBridge(setScTitle) {
   useEffect(() => {
@@ -294,6 +372,7 @@ export default function Music() {
 
       {/* EP */}
       <SectionLabel mt>EP</SectionLabel>
+      <PochetteBack />
       <LargeEmbed item={EP} />
 
       {/* Exclusifs */}
