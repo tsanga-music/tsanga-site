@@ -319,6 +319,64 @@ export default function Gallery() {
         ))}
       </div>
 
+      {/* Credits */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1, delay: 0.3 }}
+        style={{
+          marginTop: '3rem',
+          paddingTop: '2rem',
+          borderTop: '1px solid rgba(255,255,255,0.04)',
+        }}
+      >
+        <p style={{
+          fontSize: '0.6rem',
+          letterSpacing: '0.08em',
+          color: 'rgba(212,216,240,0.3)',
+          marginBottom: '0.8rem',
+        }}>
+          Credits and thanks to :
+        </p>
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '0.5rem 2rem',
+        }}>
+          {[
+            { handle: 'laetishirt',          role: 'Creative Director' },
+            { handle: 'rhyspll',             role: 'Photographer' },
+            { handle: 'emotionalriots',      role: 'Studio and Light Assistant' },
+            { handle: 'sbizien',             role: 'Hairstylist' },
+            { handle: 'kipras_mash',         role: 'Hairstylist Assistant' },
+            { handle: 'lucianprietosanchez', role: 'Stylist' },
+            { handle: 'alv_mua',             role: 'Make Up Artist' },
+            { handle: 'afrobodega',          role: 'Brand' },
+            { handle: 'sangiev',             role: 'Brand' },
+          ].map(({ handle, role }) => (
+            <span key={handle} style={{ fontSize: '0.65rem', color: 'rgba(212,216,240,0.35)', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
+              <a
+                href={`https://instagram.com/${handle}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: 'rgba(212,216,240,0.55)',
+                  textDecoration: 'none',
+                  cursor: 'none',
+                  transition: 'color 0.2s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = 'rgba(212,216,240,0.9)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(212,216,240,0.55)'}
+              >
+                @{handle}
+              </a>
+              {' '}· {role}
+            </span>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Lightbox */}
       <AnimatePresence>
         {lb.open && (
