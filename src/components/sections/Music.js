@@ -255,7 +255,7 @@ function PochetteBack() {
 }
 
 /* ── SC Widget API bridge ────────────────────────────────────────── */
-function useSCWidgetBridge(setScTitle) {
+function useSCWidgetBridge({ setScTitle, setScPlaying, setScProgress, registerWidget, activateWidget }) {
   useEffect(() => {
     if (!document.getElementById('sc-widget-api')) {
       const script = document.createElement('script');
@@ -268,17 +268,35 @@ function useSCWidgetBridge(setScTitle) {
       if (!window.SC?.Widget) return false;
       const iframes = document.querySelectorAll('iframe[src*="soundcloud.com"]');
       if (!iframes.length) return false;
-      iframes.forEach((iframe) => {
+
+      iframes.forEach((iframe, idx) => {
         if (iframe.__scBound) return;
         iframe.__scBound = true;
+
         const widget = window.SC.Widget(iframe);
+        registerWidget(widget, idx);
+
         widget.bind(window.SC.Widget.Events.PLAY, () => {
+          activateWidget(widget, idx);
+          setScPlaying(true);
           widget.getCurrentSound((sound) => {
             if (sound?.title) setScTitle(sound.title);
           });
         });
-        widget.bind(window.SC.Widget.Events.PAUSE,  () => setScTitle(null));
-        widget.bind(window.SC.Widget.Events.FINISH, () => setScTitle(null));
+
+        widget.bind(window.SC.Widget.Events.PAUSE, () => {
+          setScPlaying(false);
+        });
+
+        widget.bind(window.SC.Widget.Events.FINISH, () => {
+          setScPlaying(false);
+          setScProgress(0);
+          setScTitle(null);
+        });
+
+        widget.bind(window.SC.Widget.Events.PLAY_PROGRESS, (e) => {
+          setScProgress(e.relativePosition * 100);
+        });
       });
       return true;
     };
@@ -288,18 +306,18 @@ function useSCWidgetBridge(setScTitle) {
     }, 600);
 
     return () => clearInterval(interval);
-  }, [setScTitle]);
+  }, [setScTitle, setScPlaying, setScProgress, registerWidget, activateWidget]);
 }
 
 /* ── Section Musique ─────────────────────────────────────────────── */
 export default function Music() {
   const { t } = useLang();
-  const { setScTitle } = useAudio();
+  const { setScTitle, setScPlaying, setScProgress, registerWidget, activateWidget } = useAudio();
   const titleRef = useRef(null);
   const titleInView = useInView(titleRef, { once: true });
   const glow = useSectionGlow();
 
-  useSCWidgetBridge(setScTitle);
+  useSCWidgetBridge({ setScTitle, setScPlaying, setScProgress, registerWidget, activateWidget });
 
   return (
     <section id="music" style={{
