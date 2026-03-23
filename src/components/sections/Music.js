@@ -434,6 +434,71 @@ export default function Music() {
       }}>
         <div style={{ flex: '1 1 360px' }}>
           <VinylFlip />
+          {/* Credits */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.4 }}
+            style={{ marginTop: '1.6rem', paddingLeft: '0.2rem' }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+              {[
+                { handle: 'laetishirt',          role: 'Creative Director' },
+                { handle: 'rhyspll',             role: 'Photographer' },
+                { handle: 'emotionalriots',      role: 'Studio and Light Assistant' },
+                { handle: 'sbizien',             role: 'Hairstylist' },
+                { handle: 'kipras_mash',         role: 'Hairstylist Assistant' },
+                { handle: 'lucianprietosanchez', role: 'Stylist' },
+                { handle: 'alv_mua',             role: 'Make Up Artist' },
+              ].map(({ handle, role }) => (
+                <span key={handle} style={{ fontSize: '0.62rem', color: 'rgba(212,216,240,0.35)', letterSpacing: '0.03em' }}>
+                  <a
+                    href={`https://instagram.com/${handle}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'rgba(212,216,240,0.6)', textDecoration: 'none', cursor: 'none' }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'rgba(212,216,240,0.95)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(212,216,240,0.6)'}
+                  >@{handle}</a>
+                  {' '}· {role}
+                </span>
+              ))}
+            </div>
+            <div style={{ marginTop: '0.7rem', fontSize: '0.62rem', color: 'rgba(212,216,240,0.35)', letterSpacing: '0.03em' }}>
+              {'Brands : '}
+              {['afrobodega', 'sangiev'].map((handle, i, arr) => (
+                <span key={handle}>
+                  <a
+                    href={`https://instagram.com/${handle}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'rgba(212,216,240,0.6)', textDecoration: 'none', cursor: 'none' }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'rgba(212,216,240,0.95)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(212,216,240,0.6)'}
+                  >@{handle}</a>
+                  {i < arr.length - 1 ? ' and ' : ''}
+                </span>
+              ))}
+            </div>
+            <div style={{ marginTop: '0.5rem', fontSize: '0.62rem', color: 'rgba(212,216,240,0.35)', letterSpacing: '0.03em' }}>
+              {'Thanks to '}
+              {['csc.records666', 'studio_cvpo'].map((handle, i, arr) => (
+                <span key={handle}>
+                  <a
+                    href={`https://instagram.com/${handle}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'rgba(212,216,240,0.6)', textDecoration: 'none', cursor: 'none' }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'rgba(212,216,240,0.95)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(212,216,240,0.6)'}
+                  >@{handle}</a>
+                  {i < arr.length - 1 ? ' and ' : ''}
+                </span>
+              ))}
+              {' for the Artwork.'}
+            </div>
+          </motion.div>
         </div>
         <div style={{ flex: '1 1 320px' }}>
           <LargeEmbed item={EP} />
