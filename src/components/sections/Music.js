@@ -3,8 +3,8 @@ import { motion, useInView } from 'framer-motion';
 import { useLang } from '../../context/LangContext';
 import { useSectionGlow } from '../../hooks/useSectionGlow';
 import { useAudio } from '../../context/AudioContext';
-import frontSrc from '../../assets/pochette-front.jpg';
-import backSrc  from '../../assets/pochette-back.jpg';
+import frontSrc from '../../assets/pochette front.JPG';
+import backSrc  from '../../assets/pochette back.JPG';
 
 /* ── Constructeur d'URL SoundCloud ────────────────────────────────── */
 const SC_PARAMS = '&color=%23d4d8f0&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false';
