@@ -104,7 +104,8 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 2, ease: [0.22, 1, 0.36, 1] }}
-          style={{ display: 'flex', gap: '1.2rem', marginTop: '0.5rem' }}
+          className="hero-cta"
+          style={{ marginTop: '0.5rem' }}
         >
           <motion.button
             onClick={toggle}

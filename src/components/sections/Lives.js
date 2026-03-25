@@ -17,6 +17,8 @@ function DateRow({ date, index }) {
   const inView = useInView(ref, { once: true, margin: '-40px' });
   const status = STATUS_STYLES[date.status] || STATUS_STYLES['annoncé'];
 
+  const hasTickets = date.status !== 'sold out' && date.status !== 'annoncé' && date.status !== 'announced' && date.status !== 'angekündigt';
+
   return (
     <motion.div
       ref={ref}
@@ -26,28 +28,22 @@ function DateRow({ date, index }) {
     >
       <motion.div
         whileHover={{ background: 'rgba(74,143,255,0.04)', borderColor: 'rgba(74,143,255,0.18)' }}
+        className="date-row-grid"
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'auto 1fr auto auto',
-          alignItems: 'center',
-          gap: '1.5rem',
-          padding: '1.4rem 1.8rem',
           border: '1px solid rgba(255,255,255,0.05)',
           borderRadius: 4,
           cursor: 'none',
           transition: 'background 0.3s, border-color 0.3s',
         }}
       >
-        {/* Date */}
-        <div style={{ minWidth: 120 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'rgba(255,255,255,0.35)', fontSize: '0.72rem' }}>
-            <Calendar size={11} />
-            <span style={{ letterSpacing: '0.04em' }}>{date.date}</span>
-          </div>
+        {/* [1] Date */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'rgba(255,255,255,0.35)', fontSize: '0.72rem' }}>
+          <Calendar size={11} />
+          <span style={{ letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>{date.date}</span>
         </div>
 
-        {/* City + Venue */}
-        <div>
+        {/* [2] City + Venue */}
+        <div className="date-row-city">
           <div style={{ fontSize: '1rem', fontWeight: 600, letterSpacing: '0.04em', marginBottom: '0.2rem' }}>
             {date.city}
           </div>
@@ -57,8 +53,8 @@ function DateRow({ date, index }) {
           </div>
         </div>
 
-        {/* Status badge */}
-        <div style={{
+        {/* [3] Status badge */}
+        <div className="date-row-status" style={{
           padding: '4px 10px',
           borderRadius: 2,
           background: status.bg,
@@ -71,34 +67,36 @@ function DateRow({ date, index }) {
           {status.label}
         </div>
 
-        {/* Book button */}
-        {date.status !== 'sold out' && date.status !== 'annoncé' && date.status !== 'announced' && date.status !== 'angekündigt' ? (
-          <motion.button
-            whileHover={{ background: 'rgba(74,143,255,0.2)' }}
-            whileTap={{ scale: 0.95 }}
-            style={{
-              padding: '6px 14px',
-              background: 'transparent',
-              border: '1px solid rgba(255,255,255,0.2)',
-              borderRadius: 2,
-              color: 'rgba(255,255,255,0.7)',
-              fontSize: '0.68rem',
-              letterSpacing: '0.04em',
-              cursor: 'none',
-              fontFamily: 'inherit',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              whiteSpace: 'nowrap',
-              transition: 'background 0.2s',
-            }}
-          >
-            <ExternalLink size={11} />
-            Tickets
-          </motion.button>
-        ) : (
-          <div style={{ width: 80 }} />
-        )}
+        {/* [4] Tickets button */}
+        <div className="date-row-btn">
+          {hasTickets ? (
+            <motion.button
+              whileHover={{ background: 'rgba(74,143,255,0.2)' }}
+              whileTap={{ scale: 0.95 }}
+              style={{
+                padding: '6px 14px',
+                background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: 2,
+                color: 'rgba(255,255,255,0.7)',
+                fontSize: '0.68rem',
+                letterSpacing: '0.04em',
+                cursor: 'none',
+                fontFamily: 'inherit',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                whiteSpace: 'nowrap',
+                transition: 'background 0.2s',
+              }}
+            >
+              <ExternalLink size={11} />
+              Tickets
+            </motion.button>
+          ) : (
+            <div />
+          )}
+        </div>
       </motion.div>
     </motion.div>
   );
@@ -111,10 +109,7 @@ export default function Lives() {
   const glow = useSectionGlow();
 
   return (
-    <section id="lives" style={{
-      padding: 'clamp(5rem, 10vw, 8rem) clamp(1.5rem, 6vw, 5rem)',
-      position: 'relative',
-    }}>
+    <section id="lives" className="section-pad" style={{ position: 'relative' }}>
       {/* Big ambient blur */}
       <div style={{
         position: 'absolute',
@@ -192,16 +187,12 @@ export default function Lives() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: 0.5 }}
+        className="booking-cta"
         style={{
           marginTop: '3rem',
           padding: '2rem',
           border: '1px solid rgba(255,255,255,0.05)',
           borderRadius: 4,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '1rem',
         }}
       >
         <div>

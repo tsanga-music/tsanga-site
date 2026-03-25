@@ -10,10 +10,7 @@ export default function Shop() {
   const glow = useSectionGlow();
 
   return (
-    <section id="shop" style={{
-      padding: 'clamp(5rem, 10vw, 8rem) clamp(1.5rem, 6vw, 5rem)',
-      position: 'relative',
-    }}>
+    <section id="shop" className="section-pad" style={{ position: 'relative' }}>
       {/* Background accent */}
       <div style={{
         position: 'absolute',

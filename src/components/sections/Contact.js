@@ -77,10 +77,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" style={{
-      padding: 'clamp(5rem, 10vw, 8rem) clamp(1.5rem, 6vw, 5rem)',
-      position: 'relative',
-    }}>
+    <section id="contact" className="section-pad" style={{ position: 'relative' }}>
       {/* Top line */}
       <div style={{
         position: 'absolute',
@@ -91,13 +88,7 @@ export default function Contact() {
         background: 'linear-gradient(90deg, transparent, rgba(74,143,255,0.2), transparent)',
       }} />
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: 'clamp(3rem, 6vw, 6rem)',
-        alignItems: 'start',
-      }}
-      className="contact-grid">
+      <div className="contact-grid" style={{ alignItems: 'start' }}>
         {/* Left: Info */}
         <div>
           <div ref={titleRef} style={{ marginBottom: '3rem' }}>
@@ -290,15 +281,11 @@ export default function Contact() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ delay: 0.8 }}
+        className="footer-row"
         style={{
           marginTop: '6rem',
           paddingTop: '2rem',
           borderTop: '1px solid rgba(255,255,255,0.05)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '1rem',
         }}
       >
         <div style={{

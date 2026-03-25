@@ -1,3 +1,8 @@
+/* ── Tailwind directives ───────────────────────────────────────────── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ── Berliner Condensed — police unique du site ────────────────────── */
 @font-face {
   font-family: 'Berliner Condensed';
@@ -11,11 +16,8 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  /* Berliner Condensed partout — écrase tous les fontFamily inline */
   font-family: 'Berliner Condensed', 'Arial Narrow', sans-serif !important;
-  /* Annule tous les textTransform: uppercase des composants inline */
   text-transform: none !important;
-  /* Berliner Condensed est déjà condensé — letterSpacing sobre */
   letter-spacing: 0.04em !important;
 }
 
@@ -24,6 +26,11 @@
   --glow-blue:  #4a8fff;
   --glow-red:   #ff3060;
   --text:       #ffffff;
+  /* Spacing tokens */
+  --section-px-mobile:  1.5rem;
+  --section-px-tablet:  3rem;
+  --section-px-desktop: clamp(3rem, 6vw, 5rem);
+  --section-py:         clamp(5rem, 10vw, 8rem);
 }
 
 html { scroll-behavior: smooth; }
@@ -82,10 +89,187 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 12px; heigh
 /* ── Cursor ────────────────────────────────────────────────────────── */
 *, a, button, input, textarea, select { cursor: none !important; }
 
-/* ── Responsive ────────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .desktop-nav     { display: none !important; }
-  .mobile-menu-btn { display: flex !important; }
-  .contact-grid    { grid-template-columns: 1fr !important; }
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE LAYOUT — Mobile-first
+   Breakpoints: sm 640px | md 768px | lg 1024px | xl 1280px
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Navbar ──────────────────────────────────────────────────────── */
+.desktop-nav     { display: none; }
+.mobile-menu-btn { display: flex !important; }
+
+@media (min-width: 768px) {
+  .desktop-nav     { display: flex !important; }
+  .mobile-menu-btn { display: none !important; }
 }
+
+/* ── Section padding — mobile-first ──────────────────────────────── */
+.section-pad {
+  padding: 5rem var(--section-px-mobile);
+}
+@media (min-width: 640px) {
+  .section-pad { padding: 5rem var(--section-px-tablet); }
+}
+@media (min-width: 1024px) {
+  .section-pad { padding: var(--section-py) var(--section-px-desktop); }
+}
+
+/* ── Hero CTA buttons — stack sur mobile, côte à côte sur sm+ ─────── */
+.hero-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  align-items: stretch;
+}
+@media (min-width: 480px) {
+  .hero-cta {
+    flex-direction: row;
+    width: auto;
+    align-items: center;
+    gap: 1.2rem;
+  }
+}
+
+/* ── Lives / DateRow — mobile-first 2×2 → 4-col desktop ──────────── */
+/*
+  DOM order: [date] [city+venue] [status] [btn]
+  Mobile  : 2-col grid, each item placed explicitly
+  sm+     : 4-col single-row grid
+*/
+.date-row-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.5rem 0.75rem;
+  padding: 1rem 1.1rem;
+  align-items: center;
+}
+/* date: row 1 col 1 (natural) */
+.date-row-city   { grid-row: 2; grid-column: 1; }
+.date-row-status { grid-row: 1; grid-column: 2; align-self: center; }
+.date-row-btn    { grid-row: 2; grid-column: 2; align-self: center; }
+
+@media (min-width: 640px) {
+  .date-row-grid {
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-rows: 1fr;
+    gap: 1.2rem;
+    padding: 1.2rem 1.4rem;
+  }
+  .date-row-city, .date-row-status, .date-row-btn {
+    grid-row: 1;
+    grid-column: auto;
+    align-self: center;
+  }
+}
+@media (min-width: 1024px) {
+  .date-row-grid { gap: 1.5rem; padding: 1.4rem 1.8rem; }
+}
+
+/* ── Lives booking CTA — stack sur mobile ────────────────────────── */
+.booking-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+@media (min-width: 640px) {
+  .booking-cta {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* ── Contact grid — stack sur mobile, 2 cols sur md+ ─────────────── */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+@media (min-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(3rem, 6vw, 6rem);
+  }
+}
+
+/* ── Music EP layout — stack sur mobile ──────────────────────────── */
+.music-ep-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+@media (min-width: 768px) {
+  .music-ep-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    align-items: center;
+  }
+}
+
+/* ── Gallery grid — colonne unique sur mobile, grille sur sm+ ─────── */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  grid-auto-rows: 240px;
+}
+@media (min-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.875rem;
+  }
+}
+@media (min-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+}
+
+/* ── Gallery credits wrap ─────────────────────────────────────────── */
+.gallery-credits {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+@media (min-width: 640px) {
+  .gallery-credits {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+  }
+}
+
+/* ── Footer — stack sur mobile ───────────────────────────────────── */
+.footer-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+@media (min-width: 640px) {
+  .footer-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* ── Range input hidden on small phones ─────────────────────────── */
 @media (max-width: 600px) { input[type="range"] { display: none; } }
+
+/* ── Embeds grid — 1 col mobile, 2 col md+ ───────────────────────── */
+.embeds-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 640px) {
+  .embeds-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}

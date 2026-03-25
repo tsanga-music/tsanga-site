@@ -357,10 +357,7 @@ export default function Music() {
   useSCWidgetBridge({ setScTitle, setScPlaying, setScProgress, registerWidget, activateWidget });
 
   return (
-    <section id="music" style={{
-      padding: 'clamp(5rem, 10vw, 8rem) clamp(1.5rem, 6vw, 5rem)',
-      position: 'relative',
-    }}>
+    <section id="music" className="section-pad" style={{ position: 'relative' }}>
       <div style={{
         position: 'absolute', top: '20%', right: '-10%',
         width: '50%', height: '60%',
@@ -426,12 +423,7 @@ export default function Music() {
 
       {/* ── EP — pochette à gauche, embed à droite ─────────────────── */}
       <SectionLabel mt>EP</SectionLabel>
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '2.5rem',
-        alignItems: 'center',
-      }}>
+      <div className="music-ep-grid">
         <div style={{ flex: '1 1 360px' }}>
           <VinylFlip />
           {/* Credits */}
@@ -507,7 +499,7 @@ export default function Music() {
 
       {/* ── Exclusifs ──────────────────────────────────────────────── */}
       <SectionLabel mt>EXCLUSIFS</SectionLabel>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
+      <div className="embeds-grid">
         {EXCLUSIVES.map((item, i) => (
           <ExclusiveEmbed key={item.path} item={item} index={i} />
         ))}
@@ -515,7 +507,7 @@ export default function Music() {
 
       {/* ── Singles ────────────────────────────────────────────────── */}
       <SectionLabel mt>SINGLES</SectionLabel>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
+      <div className="embeds-grid">
         {SINGLES.map((item, i) => (
           <SmallEmbed key={item.path} item={item} index={i} />
         ))}

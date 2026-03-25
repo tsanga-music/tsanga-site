@@ -244,10 +244,7 @@ export default function Gallery() {
   const nextLb  = useCallback(()  => setLb((s) => ({ ...s, index: s.index + 1, dir:  1 })), []);
 
   return (
-    <section id="gallery" style={{
-      padding: 'clamp(5rem, 10vw, 8rem) clamp(1.5rem, 6vw, 5rem)',
-      position: 'relative',
-    }}>
+    <section id="gallery" className="section-pad" style={{ position: 'relative' }}>
       {/* Section title */}
       <div ref={titleRef} style={{ marginBottom: '4rem' }}>
         <motion.div
@@ -306,12 +303,7 @@ export default function Gallery() {
       </div>
 
       {/* Grille */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-        gap: '1rem',
-        gridAutoRows: '240px',
-      }}>
+      <div className="gallery-grid">
         {PHOTOS.map((photo, i) => (
           <div key={photo.id} style={{ gridRow: photo.span }}>
             <GalleryItem photo={photo} index={i} onOpen={() => openLb(i)} />
@@ -339,11 +331,7 @@ export default function Gallery() {
         }}>
           Credits and thanks to :
         </p>
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '0.5rem 2rem',
-        }}>
+        <div className="gallery-credits">
           {[
             { handle: 'laetishirt',          role: 'Creative Director' },
             { handle: 'rhyspll',             role: 'Photographer' },
