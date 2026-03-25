@@ -108,7 +108,7 @@ export default function Shop() {
           color: 'rgba(255,255,255,0.7)',
           margin: 0,
         }}>
-          Merch bientôt disponible
+          {t.shop.comingSoon}
         </p>
         <p style={{
           fontSize: '0.7rem',

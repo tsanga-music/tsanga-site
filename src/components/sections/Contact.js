@@ -69,6 +69,8 @@ export default function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const { name, email, message } = form;
+    window.location.href = `mailto:management@tsanga.be?subject=${encodeURIComponent(`Message de ${name}`)}&body=${encodeURIComponent(`De: ${name}\nEmail: ${email}\n\n${message}`)}`;
     setSent(true);
     setTimeout(() => setSent(false), 3000);
     setForm({ name: '', email: '', message: '' });

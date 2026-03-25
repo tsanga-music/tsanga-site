@@ -30,6 +30,7 @@ const en = {
   shop: {
     title: 'Shop',
     subtitle: 'Objects & Relics',
+    comingSoon: 'Merch coming soon',
     addToCart: 'Add to cart',
     cart: 'Cart',
     total: 'Total',

@@ -43,8 +43,8 @@ export function AudioProvider({ children }) {
     setPlaying(p => !p);
   };
 
-  const next = () => { setTrackIdx(i => (i + 1) % TRACKS.length); setProgress(0); };
-  const prev = () => { setTrackIdx(i => (i - 1 + TRACKS.length) % TRACKS.length); setProgress(0); };
+  const next = useCallback(() => { setTrackIdx(i => (i + 1) % TRACKS.length); setProgress(0); }, []);
+  const prev = useCallback(() => { setTrackIdx(i => (i - 1 + TRACKS.length) % TRACKS.length); setProgress(0); }, []);
 
   useEffect(() => {
     if (playing && !audioRef.current?.src) {
@@ -55,7 +55,7 @@ export function AudioProvider({ children }) {
       clearInterval(intervalRef.current);
     }
     return () => clearInterval(intervalRef.current);
-  }, [playing]); // eslint-disable-line
+  }, [playing, next]);
 
   /* ── SC Widget : enregistrement ───────────────────────────────── */
   const registerWidget = useCallback((widget, idx) => {

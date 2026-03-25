@@ -20,12 +20,19 @@ export default function CustomCursor() {
     const leaveLink = () => { hoverRef.current = false; };
 
     window.addEventListener('mousemove', move);
-    document.querySelectorAll('a, button, [data-cursor]').forEach((el) => {
+    const elements = Array.from(document.querySelectorAll('a, button, [data-cursor]'));
+    elements.forEach((el) => {
       el.addEventListener('mouseenter', enterLink);
       el.addEventListener('mouseleave', leaveLink);
     });
 
-    return () => window.removeEventListener('mousemove', move);
+    return () => {
+      window.removeEventListener('mousemove', move);
+      elements.forEach((el) => {
+        el.removeEventListener('mouseenter', enterLink);
+        el.removeEventListener('mouseleave', leaveLink);
+      });
+    };
   }, [mx, my]);
 
   return (

@@ -5,6 +5,11 @@ import {
   Volume2, ChevronDown, ChevronUp, Music2,
 } from 'lucide-react';
 
+const WAVEFORM_BARS = Array.from({ length: 18 }, () => ({
+  maxH: Math.random() * 14 + 4,
+  dur: 0.5 + Math.random() * 0.5,
+}));
+
 export default function AudioPlayer() {
   const {
     track, tracks, trackIdx, playing, progress, volume,
@@ -180,11 +185,11 @@ export default function AudioPlayer() {
           opacity: 0.3,
           pointerEvents: 'none',
         }}>
-          {Array.from({ length: 18 }).map((_, i) => (
+          {WAVEFORM_BARS.map((bar, i) => (
             <motion.div
               key={i}
-              animate={{ height: [4, Math.random() * 14 + 4, 4] }}
-              transition={{ duration: 0.5 + Math.random() * 0.5, repeat: Infinity, ease: 'easeInOut' }}
+              animate={{ height: [4, bar.maxH, 4] }}
+              transition={{ duration: bar.dur, repeat: Infinity, ease: 'easeInOut' }}
               style={{ width: 2, background: '#4a8fff', borderRadius: 1 }}
             />
           ))}

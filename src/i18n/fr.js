@@ -30,6 +30,7 @@ const fr = {
   shop: {
     title: 'Shop',
     subtitle: 'Objets & Reliques',
+    comingSoon: 'Merch bientôt disponible',
     addToCart: 'Ajouter',
     cart: 'Panier',
     total: 'Total',

@@ -30,6 +30,7 @@ const de = {
   shop: {
     title: 'Shop',
     subtitle: 'Objekte & Reliquien',
+    comingSoon: 'Merch bald verfügbar',
     addToCart: 'In den Warenkorb',
     cart: 'Warenkorb',
     total: 'Gesamt',
