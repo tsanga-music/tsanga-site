@@ -108,6 +108,15 @@ export function AudioProvider({ children }) {
     scWidgetsRef.current.forEach(w => w?.setVolume(Math.round(v * 100)));
   }, []);
 
+  /* ── Démarre le premier widget SC disponible (Live Set) ─────────── */
+  const playFirst = useCallback(() => {
+    const w = scWidgetsRef.current[0];
+    if (!w) return;
+    activeWidgetRef.current = w;
+    activeIdxRef.current    = 0;
+    w.play();
+  }, []);
+
   return (
     <AudioContext.Provider value={{
       /* local */
@@ -119,7 +128,7 @@ export function AudioProvider({ children }) {
       scProgress, setScProgress,
       /* sc controls */
       registerWidget, activateWidget,
-      scToggle, scNext, scPrev, scSeek, scSetVolume,
+      scToggle, scNext, scPrev, scSeek, scSetVolume, playFirst,
     }}>
       {children}
       <audio ref={audioRef} onEnded={next} />

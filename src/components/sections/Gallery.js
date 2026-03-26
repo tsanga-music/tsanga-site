@@ -150,14 +150,45 @@ function GalleryItem({ photo, index, onOpen }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const containerRef = useRef(null);
+  const clickTimerRef = useRef(null);
+  const clickCountRef = useRef(0);
 
+  /* zoomActive : activé par double-clic, désactivé par simple clic ou mouseleave */
+  const [zoomActive, setZoomActive] = useState(false);
   const [mag, setMag] = useState({
     visible: false, x: 0, y: 0,
     bgPosX: 0, bgPosY: 0, bgW: 0, bgH: 0,
   });
 
+  /* Distingue simple clic (lightbox) vs double-clic (zoom) */
+  const handleClick = useCallback(() => {
+    clickCountRef.current += 1;
+    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+
+    clickTimerRef.current = setTimeout(() => {
+      const n = clickCountRef.current;
+      clickCountRef.current = 0;
+      clickTimerRef.current = null;
+
+      if (n >= 2) {
+        /* Double-clic → toggle zoom */
+        setZoomActive((v) => !v);
+        setMag((m) => ({ ...m, visible: false }));
+      } else {
+        /* Simple clic → si zoom actif on le coupe, sinon on ouvre la lightbox */
+        if (zoomActive) {
+          setZoomActive(false);
+          setMag((m) => ({ ...m, visible: false }));
+        } else {
+          onOpen();
+        }
+      }
+    }, 260);
+  }, [onOpen, zoomActive]);
+
+  /* Loupe — n'affiche que si zoomActive */
   const handleMouseMove = useCallback((e) => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !zoomActive) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -169,10 +200,12 @@ function GalleryItem({ photo, index, onOpen }) {
       bgW: rect.width * 2,
       bgH: rect.height * 2,
     });
-  }, []);
+  }, [zoomActive]);
 
   const handleMouseLeave = useCallback(() => {
     setMag((m) => ({ ...m, visible: false }));
+    /* Désactive le zoom quand la souris quitte la photo */
+    setZoomActive(false);
   }, []);
 
   return (
@@ -185,7 +218,7 @@ function GalleryItem({ photo, index, onOpen }) {
     >
       <div
         ref={containerRef}
-        onClick={onOpen}
+        onClick={handleClick}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{
@@ -205,8 +238,22 @@ function GalleryItem({ photo, index, onOpen }) {
           }}
         />
 
-        {/* Loupe circulaire */}
-        {mag.visible && (
+        {/* Indicateur zoom actif */}
+        {zoomActive && (
+          <div style={{
+            position: 'absolute', bottom: 8, right: 10,
+            fontSize: '0.6rem', letterSpacing: '0.08em',
+            color: 'rgba(74,143,255,0.9)',
+            background: 'rgba(4,4,10,0.7)',
+            padding: '2px 6px', borderRadius: 2,
+            pointerEvents: 'none', zIndex: 11,
+          }}>
+            ZOOM
+          </div>
+        )}
+
+        {/* Loupe circulaire — visible uniquement si zoomActive */}
+        {mag.visible && zoomActive && (
           <div style={{
             position: 'absolute',
             left: mag.x - RADIUS,
