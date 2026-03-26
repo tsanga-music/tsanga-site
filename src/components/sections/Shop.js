@@ -6,7 +6,7 @@ import { useSectionGlow } from '../../hooks/useSectionGlow';
 export default function Shop() {
   const { t } = useLang();
   const titleRef = useRef(null);
-  const titleInView = useInView(titleRef, { once: true });
+  const titleInView = useInView(titleRef, { once: false, amount: 0.3 });
   const glow = useSectionGlow();
 
   return (
@@ -25,16 +25,18 @@ export default function Shop() {
       {/* Section title */}
       <div ref={titleRef} style={{ marginBottom: '4rem' }}>
         <motion.div
-          initial={{ scaleX: 0 }}
-          animate={titleInView ? { scaleX: 1 } : {}}
-          transition={{ duration: 0.8 }}
+          initial={{ scaleX: 50 }}
+          animate={titleInView ? { scaleX: 1 } : { scaleX: 50 }}
+          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
           style={{ width: 48, height: 1, background: '#4a8fff', marginBottom: '1.2rem', transformOrigin: 'left' }}
         />
         <motion.h2
           ref={glow.ref}
           initial={{ opacity: 0, y: 20 }}
           animate={{
-            opacity: titleInView ? 1 : 0,
+            opacity: titleInView
+              ? [0, 0.85, 0.05, 0.92, 0.08, 1, 0.3, 1, 0.6, 1, 0.9, 1]
+              : 0,
             y: titleInView ? 0 : 20,
             filter: glow.glowing
               ? [
@@ -45,7 +47,9 @@ export default function Shop() {
               : 'drop-shadow(0 0 0px rgba(0,0,0,0))',
           }}
           transition={{
-            opacity: { duration: 0.8, delay: 0.15 },
+            opacity: titleInView
+              ? { duration: 3.5, delay: 0.2, times: [0, 0.06, 0.11, 0.17, 0.24, 0.32, 0.39, 0.46, 0.54, 0.61, 0.78, 1] }
+              : { duration: 0.4 },
             y: { duration: 0.8, delay: 0.15 },
             filter: glow.glowing
               ? { duration: 3, repeat: Infinity, ease: 'easeInOut' }

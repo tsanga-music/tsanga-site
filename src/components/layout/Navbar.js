@@ -6,30 +6,31 @@ import { useCart } from '../../context/CartContext';
 import { ShoppingBag, Menu, X, ChevronDown } from 'lucide-react';
 
 const SECTIONS = ['gallery', 'music', 'shop', 'lives', 'contact'];
-const LANGS = ['fr', 'en', 'de'];
+const LANGS    = ['fr', 'en', 'de'];
 
 export default function Navbar() {
-  const { lang, setLang, t } = useLang();
-  const { count, setOpen } = useCart();
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [langOpen, setLangOpen] = useState(false);
-  const [clock, setClock] = useState('');
-  const langRef = useRef(null);
+  const { lang, setLang, t }  = useLang();
+  const { count, setOpen }    = useCart();
+  const [scrolled,    setScrolled]    = useState(false);
+  const [mobileOpen,  setMobileOpen]  = useState(false);
+  const [langOpen,    setLangOpen]    = useState(false);
+  const [navOpen,     setNavOpen]     = useState(false);
+  const [clock,       setClock]       = useState('');
+  const langRef    = useRef(null);
+  const navDropRef = useRef(null);
 
-  /* ── Scroll detection ─────────────────────────────────────────────── */
+  /* ── Scroll ─────────────────────────────────────────────────────── */
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  /* ── Horloge Bruxelles — Intl.DateTimeFormat (fiable) ───────────── */
+  /* ── Horloge Bruxelles ───────────────────────────────────────────── */
   useEffect(() => {
     const fmt = new Intl.DateTimeFormat('fr-FR', {
       timeZone: 'Europe/Brussels',
-      hour: '2-digit',
-      minute: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
       hour12: false,
     });
     const tick = () => setClock(fmt.format(new Date()));
@@ -38,22 +39,37 @@ export default function Navbar() {
     return () => clearInterval(id);
   }, []);
 
-  /* ── Ferme le dropdown langue au clic extérieur ──────────────────── */
+  /* ── Fermeture clics extérieurs ──────────────────────────────────── */
   useEffect(() => {
-    if (!langOpen) return;
+    if (!langOpen && !navOpen) return;
     const handler = (e) => {
-      if (langRef.current && !langRef.current.contains(e.target)) {
-        setLangOpen(false);
-      }
+      if (langRef.current && !langRef.current.contains(e.target)) setLangOpen(false);
+      if (navDropRef.current && !navDropRef.current.contains(e.target)) setNavOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
-  }, [langOpen]);
+  }, [langOpen, navOpen]);
 
   const scrollTo = useCallback((id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setMobileOpen(false);
+    setNavOpen(false);
   }, []);
+
+  /* ── Horloge + loca — composant réutilisable ─────────────────────── */
+  const ClockWidget = ({ large = false }) => (
+    <span style={{
+      display: 'flex', alignItems: 'center', gap: '0.45rem',
+      fontSize: large ? '1rem' : '0.88rem',
+      letterSpacing: large ? '0.1em' : '0.12em',
+      color: large ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.55)',
+      fontVariantNumeric: 'tabular-nums',
+      transition: 'font-size 0.3s, color 0.3s',
+    }}>
+      <span className="nav-status-dot" />
+      Bxl {clock}
+    </span>
+  );
 
   return (
     <>
@@ -71,7 +87,7 @@ export default function Navbar() {
           transition: 'background 0.4s, border-color 0.4s, backdrop-filter 0.4s',
         }}
       >
-        {/* ── Logo ────────────────────────────────────────────────────── */}
+        {/* ── Logo (gauche) ────────────────────────────────────────── */}
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           style={{ background: 'none', border: 'none', cursor: 'none', padding: 0, flexShrink: 0 }}
@@ -84,41 +100,129 @@ export default function Navbar() {
           />
         </button>
 
-        {/* ── Liens desktop — apparaissent au scroll ──────────────────── */}
-        <motion.div
-          animate={{
-            opacity: scrolled ? 1 : 0,
-            y: scrolled ? 0 : -8,
-            pointerEvents: scrolled ? 'auto' : 'none',
-          }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}
+        {/* ── Centre absolu — horloge (top) ou menu dropdown (scroll) ─ */}
+        <div style={{
+          position: 'absolute',
+          left: scrolled ? 'calc(50% - 64px)' : '50%',
+          transform: 'translateX(-50%)',
+          transition: 'left 0.4s ease',
+          display: 'flex', alignItems: 'center',
+        }}
           className="desktop-nav"
         >
-          {SECTIONS.map((s) => (
-            <NavLink key={s} onClick={() => scrollTo(s)}>{t.nav[s]}</NavLink>
-          ))}
-        </motion.div>
+          <AnimatePresence mode="wait">
+            {!scrolled ? (
+              /* Heure centrée en haut de page */
+              <motion.div
+                key="clock-center"
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ClockWidget large />
+              </motion.div>
+            ) : (
+              /* Menu déroulant au scroll */
+              <motion.div
+                key="nav-dropdown"
+                ref={navDropRef}
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.3 }}
+                style={{ position: 'relative' }}
+              >
+                <button
+                  onClick={() => setNavOpen(v => !v)}
+                  style={{
+                    background: 'none',
+                    border: '1px solid rgba(255,255,255,0.14)',
+                    borderRadius: 3,
+                    padding: '7px 10px',
+                    cursor: 'none',
+                    color: 'rgba(255,255,255,0.8)',
+                    display: 'flex', alignItems: 'center',
+                    transition: 'border-color 0.2s',
+                  }}
+                >
+                  <Menu size={18} style={{
+                    transition: 'transform 0.2s',
+                    transform: navOpen ? 'rotate(90deg)' : 'rotate(0deg)',
+                  }} />
+                </button>
 
-        {/* ── Droite : localisation + langue + panier + mobile toggle ─── */}
+                <AnimatePresence>
+                  {navOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, scaleY: 0.88 }}
+                      animate={{ opacity: 1, y: 0, scaleY: 1 }}
+                      exit={{ opacity: 0, y: -8, scaleY: 0.88 }}
+                      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                      style={{
+                        position: 'absolute',
+                        top: 'calc(100% + 8px)',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        minWidth: 160,
+                        background: 'rgba(6,6,18,0.97)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: 4,
+                        backdropFilter: 'blur(20px)',
+                        overflow: 'hidden',
+                        transformOrigin: 'top center',
+                        zIndex: 200,
+                      }}
+                    >
+                      {SECTIONS.map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => scrollTo(s)}
+                          style={{
+                            display: 'block', width: '100%',
+                            padding: '0.6rem 1.2rem',
+                            background: 'none', border: 'none',
+                            color: 'rgba(255,255,255,0.6)',
+                            fontSize: '0.9rem',
+                            letterSpacing: '0.06em',
+                            textAlign: 'center', cursor: 'none',
+                            transition: 'background 0.15s, color 0.15s',
+                          }}
+                          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(74,143,255,0.1)'; e.currentTarget.style.color = '#fff'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; }}
+                        >
+                          {t.nav[s]}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* ── Droite : horloge (quand scrollé) + langue + panier ─────── */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
 
-          {/* Localisation BXL */}
-          <span className="desktop-nav" style={{
-            display: 'flex', alignItems: 'center', gap: '0.45rem',
-            fontSize: '0.78rem', letterSpacing: '0.12em',
-            color: 'rgba(255,255,255,0.4)',
-            fontVariantNumeric: 'tabular-nums',
-          }}>
-            <span className="nav-status-dot" />
-            Bxl {clock}
-          </span>
+          {/* Horloge côté droit (visible au scroll sur desktop) */}
+          <AnimatePresence>
+            {scrolled && (
+              <motion.div
+                initial={{ opacity: 0, x: 8 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 8 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ClockWidget large />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {/* ── Dropdown langue — police système pour lisibilité ─────── */}
+          {/* Dropdown langue */}
           <div ref={langRef} style={{ position: 'relative' }}>
             <button
               onClick={() => setLangOpen((v) => !v)}
-              className="font-system"
               style={{
                 background: 'none',
                 border: '1px solid rgba(255,255,255,0.14)',
@@ -146,7 +250,6 @@ export default function Navbar() {
                   animate={{ opacity: 1, y: 0, scaleY: 1 }}
                   exit={{ opacity: 0, y: -6, scaleY: 0.88 }}
                   transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                  className="font-system"
                   style={{
                     position: 'absolute',
                     top: 'calc(100% + 6px)',
@@ -250,8 +353,8 @@ export default function Navbar() {
             {/* Heure mobile */}
             <div style={{
               display: 'flex', alignItems: 'center', gap: '0.45rem',
-              fontSize: '0.75rem', letterSpacing: '0.1em',
-              color: 'rgba(255,255,255,0.3)',
+              fontSize: '0.88rem', letterSpacing: '0.1em',
+              color: 'rgba(255,255,255,0.5)',
               paddingTop: '0.5rem',
               borderTop: '1px solid rgba(255,255,255,0.05)',
             }}>
@@ -262,23 +365,5 @@ export default function Navbar() {
         )}
       </AnimatePresence>
     </>
-  );
-}
-
-function NavLink({ children, onClick }) {
-  return (
-    <motion.button
-      onClick={onClick}
-      whileHover={{ color: 'rgba(255,255,255,1)' }}
-      style={{
-        background: 'none', border: 'none', cursor: 'none',
-        color: 'rgba(255,255,255,0.45)',
-        fontFamily: 'inherit',
-        fontSize: '1.1rem', letterSpacing: '0.04em',
-        padding: 0,
-        transition: 'color 0.2s',
-      }}>
-      {children}
-    </motion.button>
   );
 }

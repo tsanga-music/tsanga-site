@@ -293,6 +293,32 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 12px; heigh
 /* ── Range input hidden on small phones ─────────────────────────── */
 @media (max-width: 600px) { input[type="range"] { display: none; } }
 
+/* ── Effet lampe halogène — apparition clignottante des titres ───── */
+@keyframes halogen-on {
+  0%   { opacity: 0; }
+  6%   { opacity: 0.85; }
+  11%  { opacity: 0.05; }
+  17%  { opacity: 0.92; }
+  24%  { opacity: 0.08; }
+  32%  { opacity: 1; }
+  39%  { opacity: 0.3; }
+  46%  { opacity: 1; }
+  54%  { opacity: 0.6; }
+  61%  { opacity: 1; }
+  70%  { opacity: 0.82; }
+  78%  { opacity: 1; }
+  87%  { opacity: 0.9; }
+  100% { opacity: 1; }
+}
+
+/* ── Prefers-reduced-motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 /* ── Embeds grid — 1 col mobile, 2 col md+ ───────────────────────── */
 .embeds-grid {
   display: grid;

@@ -20,9 +20,11 @@ export function AudioProvider({ children }) {
   const intervalRef = useRef(null);
 
   /* ── SoundCloud state ──────────────────────────────────────────── */
-  const [scTitle,    setScTitle]    = useState(null);
-  const [scPlaying,  setScPlaying]  = useState(false);
-  const [scProgress, setScProgress] = useState(0);
+  const [scTitle,       setScTitle]       = useState(null);
+  const [scPlaying,     setScPlaying]     = useState(false);
+  const [scProgress,    setScProgress]    = useState(0);
+  const [scCurrentTime, setScCurrentTime] = useState(0); // ms
+  const [scDuration,    setScDuration]    = useState(0); // ms
 
   /* ── SoundCloud refs ───────────────────────────────────────────── */
   const scWidgetsRef    = useRef([]);   // SC.Widget instances (DOM order)
@@ -126,6 +128,8 @@ export function AudioProvider({ children }) {
       scTitle,    setScTitle,
       scPlaying,  setScPlaying,
       scProgress, setScProgress,
+      scCurrentTime, setScCurrentTime,
+      scDuration,    setScDuration,
       /* sc controls */
       registerWidget, activateWidget,
       scToggle, scNext, scPrev, scSeek, scSetVolume, playFirst,
