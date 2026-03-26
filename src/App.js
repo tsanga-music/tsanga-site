@@ -1,7 +1,7 @@
 import { LangProvider } from './context/LangContext';
 import { CartProvider } from './context/CartContext';
 import { AudioProvider } from './context/AudioContext';
-import { motion } from 'framer-motion';
+import { useScrollAnimation } from './hooks/useScrollAnimation';
 import MistCanvas from './components/canvas/MistCanvas';
 import CustomCursor from './components/cursor/CustomCursor';
 import Navbar from './components/layout/Navbar';
@@ -15,20 +15,12 @@ import Shop from './components/sections/Shop';
 import Lives from './components/sections/Lives';
 import Contact from './components/sections/Contact';
 
-/* ── Transition d'entrée pour chaque section ──────────────────────────
-   Slide-up dramatique + fade au scroll. once:true = ne rejoue pas.
+/* ── Transition d'entrée pour chaque section via GSAP ScrollTrigger ──
+   Chaque section glisse depuis y:70 → 0 avec fade. once (reverse: false).
 ─────────────────────────────────────────────────────────────────────── */
 function SectionReveal({ children, delay = 0 }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 70 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.06 }}
-      transition={{ duration: 1.15, delay, ease: [0.16, 1, 0.3, 1] }}
-    >
-      {children}
-    </motion.div>
-  );
+  const ref = useScrollAnimation({ y: 70, duration: 1.15, delay, ease: 'power3.out' });
+  return <div ref={ref}>{children}</div>;
 }
 
 export default function App() {

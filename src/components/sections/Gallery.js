@@ -1,7 +1,16 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLang } from '../../context/LangContext';
 import { useSectionGlow } from '../../hooks/useSectionGlow';
+import { useInView } from 'framer-motion';
+
+/* ── Swiper ────────────────────────────────────────────────────────── */
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, EffectCoverflow, A11y } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/effect-coverflow';
 
 import img01 from '../../assets/TSANGA 1 exp.jpg';
 import img02 from '../../assets/TSANGA 2 exp.jpg';
@@ -17,37 +26,39 @@ import img12 from '../../assets/TSANGA 12 exp.jpg';
 import imgCover from '../../assets/TSANGA cover (full) .jpg';
 
 const PHOTOS = [
-  { id: 1,  src: img01,    label: 'TSANGA 1',  span: 'span 2' },
-  { id: 2,  src: img02,    label: 'TSANGA 2',  span: 'span 1' },
-  { id: 3,  src: img03,    label: 'TSANGA 3',  span: 'span 1' },
-  { id: 4,  src: img04,    label: 'TSANGA 4',  span: 'span 2' },
-  { id: 5,  src: img05,    label: 'TSANGA 5',  span: 'span 1' },
-  { id: 6,  src: img06,    label: 'TSANGA 6',  span: 'span 2' },
-  { id: 7,  src: img07,    label: 'TSANGA 7',  span: 'span 2' },
-  { id: 8,  src: img09,    label: 'TSANGA 9',  span: 'span 1' },
-  { id: 9,  src: img10,    label: 'TSANGA 10', span: 'span 1' },
-  { id: 10, src: img11,    label: 'TSANGA 11', span: 'span 2' },
-  { id: 11, src: img12,    label: 'TSANGA 12', span: 'span 1' },
-  { id: 12, src: imgCover, label: 'Cover',     span: 'span 2' },
+  { id: 1,  src: img01,    label: 'TSANGA 1' },
+  { id: 2,  src: img02,    label: 'TSANGA 2' },
+  { id: 3,  src: img03,    label: 'TSANGA 3' },
+  { id: 4,  src: img04,    label: 'TSANGA 4' },
+  { id: 5,  src: img05,    label: 'TSANGA 5' },
+  { id: 6,  src: img06,    label: 'TSANGA 6' },
+  { id: 7,  src: img07,    label: 'TSANGA 7' },
+  { id: 8,  src: img09,    label: 'TSANGA 9' },
+  { id: 9,  src: img10,    label: 'TSANGA 10' },
+  { id: 10, src: img11,    label: 'TSANGA 11' },
+  { id: 11, src: img12,    label: 'TSANGA 12' },
+  { id: 12, src: imgCover, label: 'Cover' },
 ];
 
-const CIRCLE = 160; // diamètre de la loupe en px
-const RADIUS = CIRCLE / 2;
-
-/* ── Variants lightbox : glissement gauche/droite ─────────────────── */
+/* ── Variants lightbox ───────────────────────────────────────────── */
 const slideVariants = {
   enter: (dir) => ({ x: dir > 0 ? 110 : -110, opacity: 0 }),
   center: { x: 0, opacity: 1 },
   exit:  (dir) => ({ x: dir > 0 ? -110 : 110, opacity: 0 }),
 };
 
-/* ── Lightbox ─────────────────────────────────────────────────────── */
+/* ── Lightbox plein écran avec zoom ×2 ──────────────────────────── */
 function Lightbox({ photos, index, direction, onClose, onPrev, onNext }) {
+  const [zoomed, setZoomed] = useState(false);
+
+  /* Reset zoom au changement de photo */
+  useEffect(() => { setZoomed(false); }, [index]);
+
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowLeft'  && index > 0)                  onPrev();
-      if (e.key === 'ArrowRight' && index < photos.length - 1)  onNext();
+      if (e.key === 'ArrowLeft'  && index > 0)                 onPrev();
+      if (e.key === 'ArrowRight' && index < photos.length - 1) onNext();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -74,8 +85,8 @@ function Lightbox({ photos, index, direction, onClose, onPrev, onNext }) {
       onClick={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 2000,
-        background: 'rgba(0,0,0,0.93)',
-        backdropFilter: 'blur(12px)',
+        background: 'rgba(0,0,0,0.95)',
+        backdropFilter: 'blur(14px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         cursor: 'none',
       }}
@@ -88,6 +99,24 @@ function Lightbox({ photos, index, direction, onClose, onPrev, onNext }) {
         cursor: 'none', lineHeight: 1, padding: '0.2rem 0.5rem',
         zIndex: 2001,
       }}>✕</button>
+
+      {/* Bouton zoom */}
+      <button
+        onClick={(e) => { e.stopPropagation(); setZoomed(z => !z); }}
+        style={{
+          position: 'fixed', top: '1.5rem', right: '5rem',
+          background: 'rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.14)',
+          borderRadius: 3,
+          color: zoomed ? '#4a8fff' : 'rgba(255,255,255,0.55)',
+          cursor: 'none', padding: '0.4rem 0.8rem',
+          fontSize: '0.8rem', letterSpacing: '0.08em',
+          zIndex: 2001,
+          transition: 'color 0.2s, border-color 0.2s',
+        }}
+      >
+        {zoomed ? '×1' : '×2'}
+      </button>
 
       {/* Précédent */}
       {index > 0 && (
@@ -105,10 +134,17 @@ function Lightbox({ photos, index, direction, onClose, onPrev, onNext }) {
         >→</button>
       )}
 
-      {/* Image avec transition */}
+      {/* Image container avec zoom scrollable */}
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        style={{
+          position: 'relative',
+          maxWidth: zoomed ? '100vw' : '88vw',
+          maxHeight: zoomed ? '100vh' : '86vh',
+          overflow: zoomed ? 'scroll' : 'visible',
+          borderRadius: zoomed ? 0 : 2,
+          transition: 'max-width 0.3s, max-height 0.3s',
+        }}
       >
         <AnimatePresence mode="wait" custom={direction}>
           <motion.img
@@ -122,155 +158,28 @@ function Lightbox({ photos, index, direction, onClose, onPrev, onNext }) {
             src={photos[index].src}
             alt={photos[index].label}
             style={{
-              maxWidth: '88vw',
-              maxHeight: '86vh',
+              width: zoomed ? '200%' : '100%',
+              maxHeight: zoomed ? 'none' : '86vh',
               objectFit: 'contain',
-              borderRadius: 2,
               display: 'block',
+              transition: 'width 0.3s ease, max-height 0.3s ease',
             }}
           />
         </AnimatePresence>
 
         {/* Compteur */}
         <div style={{
-          position: 'absolute', bottom: '-2.2rem', left: '50%',
+          position: 'fixed',
+          bottom: '1.5rem', left: '50%',
           transform: 'translateX(-50%)',
           fontSize: '0.7rem', color: 'rgba(255,255,255,0.28)',
           letterSpacing: '0.1em', whiteSpace: 'nowrap',
+          background: 'rgba(4,4,10,0.6)',
+          padding: '0.3rem 0.8rem', borderRadius: 2,
+          zIndex: 2002,
         }}>
           {index + 1} / {photos.length}
         </div>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ── GalleryItem ──────────────────────────────────────────────────── */
-function GalleryItem({ photo, index, onOpen }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-  const containerRef = useRef(null);
-  const clickTimerRef = useRef(null);
-  const clickCountRef = useRef(0);
-
-  /* zoomActive : activé par double-clic, désactivé par simple clic ou mouseleave */
-  const [zoomActive, setZoomActive] = useState(false);
-  const [mag, setMag] = useState({
-    visible: false, x: 0, y: 0,
-    bgPosX: 0, bgPosY: 0, bgW: 0, bgH: 0,
-  });
-
-  /* Distingue simple clic (lightbox) vs double-clic (zoom) */
-  const handleClick = useCallback(() => {
-    clickCountRef.current += 1;
-    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
-
-    clickTimerRef.current = setTimeout(() => {
-      const n = clickCountRef.current;
-      clickCountRef.current = 0;
-      clickTimerRef.current = null;
-
-      if (n >= 2) {
-        /* Double-clic → toggle zoom */
-        setZoomActive((v) => !v);
-        setMag((m) => ({ ...m, visible: false }));
-      } else {
-        /* Simple clic → si zoom actif on le coupe, sinon on ouvre la lightbox */
-        if (zoomActive) {
-          setZoomActive(false);
-          setMag((m) => ({ ...m, visible: false }));
-        } else {
-          onOpen();
-        }
-      }
-    }, 260);
-  }, [onOpen, zoomActive]);
-
-  /* Loupe — n'affiche que si zoomActive */
-  const handleMouseMove = useCallback((e) => {
-    if (!containerRef.current || !zoomActive) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setMag({
-      visible: true,
-      x, y,
-      bgPosX: RADIUS - x * 2,
-      bgPosY: RADIUS - y * 2,
-      bgW: rect.width * 2,
-      bgH: rect.height * 2,
-    });
-  }, [zoomActive]);
-
-  const handleMouseLeave = useCallback(() => {
-    setMag((m) => ({ ...m, visible: false }));
-    /* Désactive le zoom quand la souris quitte la photo */
-    setZoomActive(false);
-  }, []);
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.9, delay: (index % 4) * 0.1, ease: [0.22, 1, 0.36, 1] }}
-      style={{ position: 'relative', overflow: 'hidden', borderRadius: 2, height: '100%' }}
-    >
-      <div
-        ref={containerRef}
-        onClick={handleClick}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          position: 'relative', width: '100%', height: '100%',
-          overflow: 'hidden', cursor: 'none',
-        }}
-      >
-        <motion.img
-          src={photo.src}
-          alt={photo.label}
-          whileHover={{ scale: 1.04 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            width: '100%', height: '100%',
-            objectFit: 'cover', objectPosition: 'center',
-            display: 'block',
-          }}
-        />
-
-        {/* Indicateur zoom actif */}
-        {zoomActive && (
-          <div style={{
-            position: 'absolute', bottom: 8, right: 10,
-            fontSize: '0.6rem', letterSpacing: '0.08em',
-            color: 'rgba(74,143,255,0.9)',
-            background: 'rgba(4,4,10,0.7)',
-            padding: '2px 6px', borderRadius: 2,
-            pointerEvents: 'none', zIndex: 11,
-          }}>
-            ZOOM
-          </div>
-        )}
-
-        {/* Loupe circulaire — visible uniquement si zoomActive */}
-        {mag.visible && zoomActive && (
-          <div style={{
-            position: 'absolute',
-            left: mag.x - RADIUS,
-            top:  mag.y - RADIUS,
-            width: CIRCLE,
-            height: CIRCLE,
-            borderRadius: '50%',
-            backgroundImage: `url(${photo.src})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: `${mag.bgW}px ${mag.bgH}px`,
-            backgroundPosition: `${mag.bgPosX}px ${mag.bgPosY}px`,
-            border: '2px solid rgba(255,255,255,0.55)',
-            boxShadow: '0 0 0 1px rgba(74,143,255,0.45), 0 6px 24px rgba(0,0,0,0.7)',
-            pointerEvents: 'none',
-            zIndex: 10,
-          }} />
-        )}
       </div>
     </motion.div>
   );
@@ -293,7 +202,7 @@ export default function Gallery() {
   return (
     <section id="gallery" className="section-pad" style={{ position: 'relative' }}>
       {/* Section title */}
-      <div ref={titleRef} style={{ marginBottom: '4rem' }}>
+      <div ref={titleRef} style={{ marginBottom: '3rem' }}>
         <motion.div
           initial={{ scaleX: 0 }}
           animate={titleInView ? { scaleX: 1 } : {}}
@@ -349,14 +258,78 @@ export default function Gallery() {
         </motion.p>
       </div>
 
-      {/* Grille */}
-      <div className="gallery-grid">
+      {/* ── Swiper coverflow ──────────────────────────────────────── */}
+      <style>{`
+        .tsanga-swiper { width: 100%; padding: 2rem 0 3.5rem !important; }
+        .tsanga-swiper .swiper-slide {
+          width: clamp(260px, 40vw, 480px);
+          height: clamp(300px, 50vw, 560px);
+          border-radius: 3px;
+          overflow: hidden;
+          cursor: none;
+          opacity: 0.4;
+          transition: opacity 0.4s;
+        }
+        .tsanga-swiper .swiper-slide-active { opacity: 1; }
+        .tsanga-swiper .swiper-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .tsanga-swiper .swiper-button-prev,
+        .tsanga-swiper .swiper-button-next {
+          color: rgba(255,255,255,0.45) !important;
+          cursor: none !important;
+        }
+        .tsanga-swiper .swiper-button-prev:hover,
+        .tsanga-swiper .swiper-button-next:hover {
+          color: #4a8fff !important;
+        }
+        .tsanga-swiper .swiper-pagination-bullet {
+          background: rgba(255,255,255,0.25) !important;
+          opacity: 1 !important;
+          cursor: none !important;
+        }
+        .tsanga-swiper .swiper-pagination-bullet-active {
+          background: #4a8fff !important;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .tsanga-swiper * { transition: none !important; animation: none !important; }
+        }
+      `}</style>
+
+      <Swiper
+        className="tsanga-swiper"
+        modules={[Navigation, Pagination, EffectCoverflow, A11y]}
+        effect="coverflow"
+        grabCursor={false}
+        centeredSlides
+        loop
+        slidesPerView="auto"
+        coverflowEffect={{
+          rotate: 28,
+          stretch: 0,
+          depth: 160,
+          modifier: 1,
+          slideShadows: true,
+        }}
+        navigation
+        pagination={{ clickable: true }}
+        onSlideClick={(swiper) => openLb(swiper.realIndex)}
+      >
         {PHOTOS.map((photo, i) => (
-          <div key={photo.id} style={{ gridRow: photo.span }}>
-            <GalleryItem photo={photo} index={i} onOpen={() => openLb(i)} />
-          </div>
+          <SwiperSlide key={photo.id}>
+            <img src={photo.src} alt={photo.label} draggable={false} />
+          </SwiperSlide>
         ))}
-      </div>
+      </Swiper>
+
+      {/* Hint double-tap */}
+      <p style={{
+        textAlign: 'center',
+        fontSize: '0.65rem',
+        letterSpacing: '0.1em',
+        color: 'rgba(255,255,255,0.2)',
+        marginBottom: '3rem',
+      }}>
+        cliquer pour plein écran · ×2 pour zoomer
+      </p>
 
       {/* Credits */}
       <motion.div
@@ -365,7 +338,7 @@ export default function Gallery() {
         viewport={{ once: true }}
         transition={{ duration: 1, delay: 0.3 }}
         style={{
-          marginTop: '3rem',
+          marginTop: '1rem',
           paddingTop: '2rem',
           borderTop: '1px solid rgba(255,255,255,0.04)',
         }}

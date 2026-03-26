@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import LogoReveal from '../ui/LogoReveal';
+import AnimatedButton from '../AnimatedButton';
+import AnimatedTagline from '../AnimatedTagline';
 import { useLang } from '../../context/LangContext';
 import { useAudio } from '../../context/AudioContext';
 
@@ -88,16 +90,14 @@ export default function Hero() {
             marginBottom: '0.2rem',
           }} />
 
-          {/* Tagline principal — italic */}
-          <p style={{
+          {/* Tagline animée */}
+          <AnimatedTagline style={{
             fontSize: 'clamp(1.1rem, 3.2vw, 1.6rem)',
             letterSpacing: '0.05em',
             color: 'rgba(255,255,255,0.78)',
             fontWeight: 400,
             fontStyle: 'italic',
-          }}>
-            {t.hero.tagline}
-          </p>
+          }} />
 
           {/* Location indicator */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
@@ -121,10 +121,8 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 2, ease: [0.22, 1, 0.36, 1] }}
           style={{ marginTop: '0.5rem' }}
         >
-          <motion.button
+          <AnimatedButton
             onClick={handleListen}
-            whileHover={{ background: 'rgba(74,143,255,0.2)', borderColor: '#4a8fff' }}
-            whileTap={{ scale: 0.96 }}
             style={{
               padding: '1rem 2.5rem',
               background: 'transparent',
@@ -133,13 +131,11 @@ export default function Hero() {
               color: '#fff',
               fontSize: '1rem',
               letterSpacing: '0.04em',
-              cursor: 'none',
-              fontFamily: 'inherit',
               transition: 'background 0.3s, border-color 0.3s',
             }}
           >
             {t.hero.cta}
-          </motion.button>
+          </AnimatedButton>
         </motion.div>
       </div>
 

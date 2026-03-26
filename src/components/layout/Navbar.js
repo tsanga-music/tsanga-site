@@ -118,7 +118,6 @@ export default function Navbar() {
           <div ref={langRef} style={{ position: 'relative' }}>
             <button
               onClick={() => setLangOpen((v) => !v)}
-              className="font-system"
               style={{
                 background: 'none',
                 border: '1px solid rgba(255,255,255,0.14)',
@@ -146,7 +145,6 @@ export default function Navbar() {
                   animate={{ opacity: 1, y: 0, scaleY: 1 }}
                   exit={{ opacity: 0, y: -6, scaleY: 0.88 }}
                   transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                  className="font-system"
                   style={{
                     position: 'absolute',
                     top: 'calc(100% + 6px)',
