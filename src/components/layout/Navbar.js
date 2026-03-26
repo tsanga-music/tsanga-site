@@ -30,7 +30,7 @@ export default function Navbar() {
   useEffect(() => {
     const fmt = new Intl.DateTimeFormat('fr-FR', {
       timeZone: 'Europe/Brussels',
-      hour: '2-digit', minute: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
       hour12: false,
     });
     const tick = () => setClock(fmt.format(new Date()));
@@ -103,8 +103,9 @@ export default function Navbar() {
         {/* ── Centre absolu — horloge (top) ou menu dropdown (scroll) ─ */}
         <div style={{
           position: 'absolute',
-          left: '50%',
+          left: scrolled ? 'calc(50% - 64px)' : '50%',
           transform: 'translateX(-50%)',
+          transition: 'left 0.4s ease',
           display: 'flex', alignItems: 'center',
         }}
           className="desktop-nav"
@@ -138,19 +139,16 @@ export default function Navbar() {
                     background: 'none',
                     border: '1px solid rgba(255,255,255,0.14)',
                     borderRadius: 3,
-                    padding: '6px 14px',
+                    padding: '7px 10px',
                     cursor: 'none',
                     color: 'rgba(255,255,255,0.8)',
-                    fontSize: '0.9rem',
-                    letterSpacing: '0.06em',
-                    display: 'flex', alignItems: 'center', gap: '0.4rem',
+                    display: 'flex', alignItems: 'center',
                     transition: 'border-color 0.2s',
                   }}
                 >
-                  Navigation
-                  <ChevronDown size={12} style={{
+                  <Menu size={18} style={{
                     transition: 'transform 0.2s',
-                    transform: navOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transform: navOpen ? 'rotate(90deg)' : 'rotate(0deg)',
                   }} />
                 </button>
 
@@ -211,7 +209,6 @@ export default function Navbar() {
           <AnimatePresence>
             {scrolled && (
               <motion.div
-                className="desktop-nav"
                 initial={{ opacity: 0, x: 8 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 8 }}

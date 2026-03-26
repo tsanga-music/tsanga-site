@@ -6,7 +6,7 @@ import { useSectionGlow } from '../../hooks/useSectionGlow';
 export default function Shop() {
   const { t } = useLang();
   const titleRef = useRef(null);
-  const titleInView = useInView(titleRef, { once: true });
+  const titleInView = useInView(titleRef, { once: false, amount: 0.3 });
   const glow = useSectionGlow();
 
   return (
@@ -48,8 +48,8 @@ export default function Shop() {
           }}
           transition={{
             opacity: titleInView
-              ? { duration: 1.8, times: [0, 0.06, 0.11, 0.17, 0.24, 0.32, 0.39, 0.46, 0.54, 0.61, 0.78, 1] }
-              : { duration: 0.3 },
+              ? { duration: 3.5, delay: 0.2, times: [0, 0.06, 0.11, 0.17, 0.24, 0.32, 0.39, 0.46, 0.54, 0.61, 0.78, 1] }
+              : { duration: 0.4 },
             y: { duration: 0.8, delay: 0.15 },
             filter: glow.glowing
               ? { duration: 3, repeat: Infinity, ease: 'easeInOut' }

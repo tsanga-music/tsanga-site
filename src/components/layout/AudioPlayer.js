@@ -28,7 +28,7 @@ export default function AudioPlayer() {
     track, tracks, trackIdx, playing, progress, volume,
     minimized, setMinimized, setVolume, toggle, next, prev, setProgress,
     scTitle, scPlaying, scProgress, scCurrentTime, scDuration,
-    scToggle, scNext, scPrev, scSeek, scSetVolume,
+    scToggle, scNext, scPrev, scSeek, scSetVolume, playFirst,
   } = useAudio();
 
   const [repeatMode, setRepeatMode] = useState(0); // index in REPEAT_MODES
@@ -42,7 +42,7 @@ export default function AudioPlayer() {
   const displayProgress = sc ? scProgress      : progress;
   const isPlaying       = sc ? scPlaying       : playing;
 
-  const handleToggle = sc ? scToggle : toggle;
+  const handleToggle = sc ? scToggle : playFirst;
   const handleNext   = sc ? scNext   : next;
   const handlePrev   = sc ? scPrev   : prev;
 
