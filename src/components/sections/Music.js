@@ -306,7 +306,7 @@ function ExclusiveEmbed({ item, index }) {
 }
 
 /* ── SC Widget API bridge ─────────────────────────────────────────── */
-function useSCWidgetBridge({ setScTitle, setScPlaying, setScProgress, registerWidget, activateWidget }) {
+function useSCWidgetBridge({ setScTitle, setScPlaying, setScProgress, setScCurrentTime, setScDuration, registerWidget, activateWidget }) {
   useEffect(() => {
     if (!document.getElementById('sc-widget-api')) {
       const script = document.createElement('script');
@@ -333,28 +333,35 @@ function useSCWidgetBridge({ setScTitle, setScPlaying, setScProgress, registerWi
           widget.getCurrentSound(sound => {
             if (sound?.title) setScTitle(sound.title);
           });
+          widget.getDuration(d => setScDuration(d));
         });
-        widget.bind(window.SC.Widget.Events.PAUSE,         () => setScPlaying(false));
-        widget.bind(window.SC.Widget.Events.FINISH,        () => { setScPlaying(false); setScProgress(0); setScTitle(null); });
-        widget.bind(window.SC.Widget.Events.PLAY_PROGRESS, e  => setScProgress(e.relativePosition * 100));
+        widget.bind(window.SC.Widget.Events.PAUSE,  () => setScPlaying(false));
+        widget.bind(window.SC.Widget.Events.FINISH, () => {
+          setScPlaying(false); setScProgress(0);
+          setScCurrentTime(0); setScDuration(0); setScTitle(null);
+        });
+        widget.bind(window.SC.Widget.Events.PLAY_PROGRESS, e => {
+          setScProgress(e.relativePosition * 100);
+          setScCurrentTime(e.currentPosition);
+        });
       });
       return true;
     };
 
     const interval = setInterval(() => { if (bindWidgets()) clearInterval(interval); }, 600);
     return () => clearInterval(interval);
-  }, [setScTitle, setScPlaying, setScProgress, registerWidget, activateWidget]);
+  }, [setScTitle, setScPlaying, setScProgress, setScCurrentTime, setScDuration, registerWidget, activateWidget]);
 }
 
 /* ── Section Musique ──────────────────────────────────────────────── */
 export default function Music() {
   const { t } = useLang();
-  const { setScTitle, setScPlaying, setScProgress, registerWidget, activateWidget } = useAudio();
+  const { setScTitle, setScPlaying, setScProgress, setScCurrentTime, setScDuration, registerWidget, activateWidget } = useAudio();
   const titleRef    = useRef(null);
   const titleInView = useInView(titleRef, { once: true });
   const glow        = useSectionGlow();
 
-  useSCWidgetBridge({ setScTitle, setScPlaying, setScProgress, registerWidget, activateWidget });
+  useSCWidgetBridge({ setScTitle, setScPlaying, setScProgress, setScCurrentTime, setScDuration, registerWidget, activateWidget });
 
   return (
     <section id="music" className="section-pad" style={{ position: 'relative' }}>
@@ -368,17 +375,19 @@ export default function Music() {
       {/* ── Titre de section ──────────────────────────────────────── */}
       <div ref={titleRef} style={{ marginBottom: '4rem' }}>
         <motion.div
-          initial={{ scaleX: 0 }}
-          animate={titleInView ? { scaleX: 1 } : {}}
-          transition={{ duration: 0.8 }}
+          initial={{ scaleX: 50 }}
+          animate={titleInView ? { scaleX: 1 } : { scaleX: 50 }}
+          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
           style={{ width: 48, height: 1, background: '#4a8fff', marginBottom: '1.2rem', transformOrigin: 'left' }}
         />
         <motion.h2
           ref={glow.ref}
           initial={{ opacity: 0, y: 20 }}
           animate={{
-            opacity: titleInView ? 1 : 0,
-            y:       titleInView ? 0 : 20,
+            opacity: titleInView
+              ? [0, 0.85, 0.05, 0.92, 0.08, 1, 0.3, 1, 0.6, 1, 0.9, 1]
+              : 0,
+            y: titleInView ? 0 : 20,
             filter: glow.glowing
               ? [
                   'drop-shadow(0 0 10px rgba(74,143,255,0.95)) drop-shadow(0 0 28px rgba(74,143,255,0.5))',
@@ -388,8 +397,10 @@ export default function Music() {
               : 'drop-shadow(0 0 0px rgba(0,0,0,0))',
           }}
           transition={{
-            opacity: { duration: 0.8, delay: 0.15 },
-            y:       { duration: 0.8, delay: 0.15 },
+            opacity: titleInView
+              ? { duration: 1.8, times: [0, 0.06, 0.11, 0.17, 0.24, 0.32, 0.39, 0.46, 0.54, 0.61, 0.78, 1] }
+              : { duration: 0.3 },
+            y: { duration: 0.8, delay: 0.15 },
             filter: glow.glowing
               ? { duration: 3, repeat: Infinity, ease: 'easeInOut' }
               : { duration: 1.2, ease: 'easeOut' },

@@ -5,7 +5,7 @@ const phrases = [
   'Architecte du vide sonore',
   'Electro Darkwave · Bruxelles',
   'DJ · Producteur · Performer',
-  /* PLACEHOLDER — sera remplacé par une phrase du press kit PDF */
+  'A Celebration of the Night · the Unseen · the Unheard',
 ];
 
 export default function AnimatedTagline({ style }) {

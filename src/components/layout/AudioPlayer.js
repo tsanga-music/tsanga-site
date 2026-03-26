@@ -27,7 +27,8 @@ export default function AudioPlayer() {
   const {
     track, tracks, trackIdx, playing, progress, volume,
     minimized, setMinimized, setVolume, toggle, next, prev, setProgress,
-    scTitle, scPlaying, scProgress, scToggle, scNext, scPrev, scSeek, scSetVolume,
+    scTitle, scPlaying, scProgress, scCurrentTime, scDuration,
+    scToggle, scNext, scPrev, scSeek, scSetVolume,
   } = useAudio();
 
   const [repeatMode, setRepeatMode] = useState(0); // index in REPEAT_MODES
@@ -78,7 +79,7 @@ export default function AudioPlayer() {
         height: barH,
         background: 'rgba(4,4,14,0.96)',
         backdropFilter: 'blur(24px)',
-        borderTop: `1px solid ${sc ? 'rgba(74,143,255,0.35)' : 'rgba(74,143,255,0.18)'}`,
+        borderTop: `1px solid rgba(74,143,255,${sc ? 0.35 : 0.28})`,
         display: 'flex',
         flexDirection: 'column',
         transition: 'height 0.3s ease, border-color 0.4s ease',
@@ -130,15 +131,19 @@ export default function AudioPlayer() {
         {/* Info track */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', minWidth: 0, flex: 1 }}>
           <motion.div
-            animate={isPlaying ? { scale: [1, 1.06, 1] } : { scale: 1 }}
-            transition={isPlaying ? { duration: 1.8, repeat: Infinity, ease: 'easeInOut' } : {}}
+            animate={isPlaying
+              ? { scale: [1, 1.06, 1] }
+              : { scale: [1, 1.03, 1] }  /* pulsation douce même en standby */
+            }
+            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
             style={{
               width: 36, height: 36,
               borderRadius: 6,
-              background: sc ? 'rgba(74,143,255,0.18)' : 'rgba(74,143,255,0.12)',
-              border: `1px solid ${sc ? 'rgba(74,143,255,0.45)' : 'rgba(74,143,255,0.25)'}`,
+              background: 'rgba(74,143,255,0.16)',
+              border: '1px solid rgba(74,143,255,0.5)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0,
+              boxShadow: '0 0 8px rgba(74,143,255,0.25)',
               transition: 'background 0.3s, border-color 0.3s',
             }}
           >
@@ -174,8 +179,8 @@ export default function AudioPlayer() {
           </div>
         </div>
 
-        {/* Temps écoulé / total (mode local uniquement) */}
-        {!minimized && !sc && localDurationSec > 0 && (
+        {/* Temps écoulé / total */}
+        {!minimized && (
           <div style={{
             fontSize: '0.65rem',
             color: 'rgba(255,255,255,0.35)',
@@ -184,7 +189,10 @@ export default function AudioPlayer() {
             whiteSpace: 'nowrap',
             flexShrink: 0,
           }}>
-            {fmtTime(localElapsedSec)} / {track.duration}
+            {sc
+              ? `${fmtTime(scCurrentTime / 1000)} / ${fmtTime(scDuration / 1000)}`
+              : localDurationSec > 0 ? `${fmtTime(localElapsedSec)} / ${track.duration}` : null
+            }
           </div>
         )}
 
