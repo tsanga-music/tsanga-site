@@ -26,7 +26,7 @@ function fmtTime(sec) {
 export default function AudioPlayer() {
   const {
     track, tracks, trackIdx, playing, progress, volume,
-    minimized, setMinimized, setVolume, toggle, next, prev, setProgress,
+    minimized, setMinimized, setVolume, next, prev, setProgress,
     scTitle, scPlaying, scProgress, scCurrentTime, scDuration,
     scToggle, scNext, scPrev, scSeek, scSetVolume, playFirst,
   } = useAudio();
