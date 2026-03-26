@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
 import logoSrc from '../../assets/tsanga_logo.png';
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -52,112 +52,176 @@ function useTransparentLogo(src) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   LogoReveal — effet TV cathodique
+   LogoReveal — 3D tilt interactif + CRT cathodique
+
+   Technique :
+   - perspective 900px sur le conteneur
+   - useMotionValue → mouse position normalisée [0..1]
+   - useSpring → lissage physique (stiffness 150, damping 18)
+   - useTransform → rotateX / rotateY [-15°..15°]
+   - useMotionTemplate → specular highlight radial-gradient qui suit la souris
+   - Tous les effets CRT existants préservés
 ───────────────────────────────────────────────────────────────────────── */
 export default function LogoReveal() {
   const src = useTransparentLogo(logoSrc);
-  const [hovered, setHovered] = useState(false);
+  const containerRef = useRef(null);
+
+  /* ── Mouse position (normalisée 0→1, centre = 0.5) ──────────────────── */
+  const rawX = useMotionValue(0.5);
+  const rawY = useMotionValue(0.5);
+
+  /* ── Spring physics — fluide, pas de rebond excessif ────────────────── */
+  const springCfg = { stiffness: 150, damping: 18, mass: 1 };
+  const sX = useSpring(rawX, springCfg);
+  const sY = useSpring(rawY, springCfg);
+
+  /* ── Rotation 3D ─────────────────────────────────────────────────────── */
+  const rotateY = useTransform(sX, [0, 1], [-15, 15]);
+  const rotateX = useTransform(sY, [0, 1], [10, -10]);
+
+  /* ── Specular highlight — simule la lumière sur surface brillante ────── */
+  const specX = useTransform(sX, [0, 1], ['0%', '100%']);
+  const specY = useTransform(sY, [0, 1], ['0%', '100%']);
+  const specBg = useMotionTemplate`radial-gradient(circle at ${specX} ${specY}, rgba(200,220,255,0.13) 0%, transparent 58%)`;
+
+  /* ── Handlers ────────────────────────────────────────────────────────── */
+  const handleMouseMove = useCallback((e) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    rawX.set((e.clientX - rect.left) / rect.width);
+    rawY.set((e.clientY - rect.top) / rect.height);
+  }, [rawX, rawY]);
+
+  const handleMouseLeave = useCallback(() => {
+    rawX.set(0.5);
+    rawY.set(0.5);
+  }, [rawX, rawY]);
 
   return (
     <>
       <style>{CSS}</style>
 
+      {/* ── Conteneur perspective ─────────────────────────────────────── */}
       <div
-        style={{ position: 'relative', display: 'inline-block', cursor: 'none' }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        ref={containerRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          position: 'relative',
+          display: 'inline-block',
+          cursor: 'none',
+          perspective: '900px',
+        }}
       >
-
-        {/* ── GLOW 1 — bleu/violet/rouge ─────────────────────────────── */}
-        {src && (
-          <img src={src} alt="" aria-hidden style={{
-            position: 'absolute', top: 0, left: 0,
-            width: '100%', height: '100%',
-            mixBlendMode: 'screen',
-            transform: 'scale(1.04)',
-            pointerEvents: 'none', zIndex: 0,
-            animation: 'tsanga-glow1 6s linear infinite',
-          }} />
-        )}
-
-        {/* ── GLOW 2 — décalé, légèrement plus large ──────────────────── */}
-        {src && (
-          <img src={src} alt="" aria-hidden style={{
-            position: 'absolute', top: 0, left: 0,
-            width: '100%', height: '100%',
-            mixBlendMode: 'screen',
-            transform: 'scale(1.08)',
-            pointerEvents: 'none', zIndex: 0,
-            animation: 'tsanga-glow2 8s linear infinite',
-          }} />
-        )}
-
-        {/* ── REVEAL + HOVER ──────────────────────────────────────────── */}
+        {/* ── Tilt 3D — spring physique ──────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.92, filter: 'blur(18px)' }}
-          animate={src ? { opacity: 1, scale: 1, filter: 'blur(0px)' } : { opacity: 0 }}
-          transition={{ duration: 1.9, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            rotateX,
+            rotateY,
+            transformStyle: 'preserve-3d',
+            willChange: 'transform',
+          }}
         >
+          {/* ── Reveal initial ─────────────────────────────────────── */}
           <motion.div
-            animate={hovered ? { scale: [1, 1.05, 1.02, 1.05, 1] } : { scale: 1 }}
-            transition={hovered
-              ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
-              : { duration: 0.5 }
-            }
+            initial={{ opacity: 0, scale: 0.92, filter: 'blur(18px)' }}
+            animate={src ? { opacity: 1, scale: 1, filter: 'blur(0px)' } : { opacity: 0 }}
+            transition={{ duration: 1.9, ease: [0.16, 1, 0.3, 1] }}
+            style={{ position: 'relative' }}
           >
+
+            {/* ── GLOW 1 — bleu/violet/rouge ────────────────────────── */}
+            {src && (
+              <img src={src} alt="" aria-hidden style={{
+                position: 'absolute', top: 0, left: 0,
+                width: '100%', height: '100%',
+                mixBlendMode: 'screen',
+                transform: 'scale(1.04)',
+                pointerEvents: 'none', zIndex: 0,
+                animation: 'tsanga-glow1 6s linear infinite',
+              }} />
+            )}
+
+            {/* ── GLOW 2 — décalé, légèrement plus large ────────────── */}
+            {src && (
+              <img src={src} alt="" aria-hidden style={{
+                position: 'absolute', top: 0, left: 0,
+                width: '100%', height: '100%',
+                mixBlendMode: 'screen',
+                transform: 'scale(1.08)',
+                pointerEvents: 'none', zIndex: 0,
+                animation: 'tsanga-glow2 8s linear infinite',
+              }} />
+            )}
+
+            {/* ── Logo principal ────────────────────────────────────── */}
             {src && (
               <img
                 src={src}
                 alt="TSANGA"
                 style={{
                   display: 'block',
-                  width: 'clamp(260px, 46vw, 540px)',
+                  width: 'clamp(340px, 62vw, 720px)',
                   height: 'auto',
                   animation: 'tsanga-crt-glitch 10s steps(1, end) infinite, tsanga-tint 12s linear infinite',
+                  position: 'relative',
+                  zIndex: 2,
                 }}
               />
             )}
+
+            {/* ── Specular highlight — suit la position de la souris ── */}
+            <motion.div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: specBg,
+                pointerEvents: 'none',
+                zIndex: 3,
+                borderRadius: 2,
+              }}
+            />
+
+            {/* ── GHOST — aberration chromatique cyan/rouge ─────────── */}
+            {src && (
+              <img src={src} alt="" aria-hidden style={{
+                position: 'absolute', top: 0, left: 0,
+                width: '100%', height: '100%',
+                mixBlendMode: 'screen',
+                opacity: 0,
+                pointerEvents: 'none', zIndex: 4,
+                animation: 'tsanga-crt-ghost 10s steps(1, end) infinite',
+              }} />
+            )}
+
+            {/* ── SCANLINES ─────────────────────────────────────────── */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.13) 3px, rgba(0,0,0,0.13) 4px)',
+              pointerEvents: 'none', zIndex: 5,
+            }} />
+
+            {/* ── BARRE DE BALAYAGE ─────────────────────────────────── */}
+            {src && (
+              <div style={{
+                position: 'absolute',
+                left: 0, right: 0,
+                height: 6,
+                background: 'linear-gradient(90deg, transparent 0%, rgba(180,220,255,0.22) 25%, rgba(200,230,255,0.32) 50%, rgba(180,220,255,0.22) 75%, transparent 100%)',
+                pointerEvents: 'none', zIndex: 6,
+                animation: 'tsanga-crt-bar 10s linear infinite',
+              }} />
+            )}
+
           </motion.div>
         </motion.div>
-
-        {/* ── GHOST — aberration chromatique cyan/rouge ────────────────── */}
-        {src && (
-          <img src={src} alt="" aria-hidden style={{
-            position: 'absolute', top: 0, left: 0,
-            width: '100%', height: '100%',
-            mixBlendMode: 'screen',
-            opacity: 0,
-            pointerEvents: 'none', zIndex: 3,
-            animation: 'tsanga-crt-ghost 10s steps(1, end) infinite',
-          }} />
-        )}
-
-        {/* ── SCANLINES — lignes horizontales cathodiques ──────────────── */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.13) 3px, rgba(0,0,0,0.13) 4px)',
-          pointerEvents: 'none', zIndex: 4,
-        }} />
-
-        {/* ── BARRE DE BALAYAGE — sync line CRT ───────────────────────── */}
-        {src && (
-          <div style={{
-            position: 'absolute',
-            left: 0, right: 0,
-            height: 6,
-            background: 'linear-gradient(90deg, transparent 0%, rgba(180,220,255,0.22) 25%, rgba(200,230,255,0.32) 50%, rgba(180,220,255,0.22) 75%, transparent 100%)',
-            pointerEvents: 'none', zIndex: 5,
-            animation: 'tsanga-crt-bar 10s linear infinite',
-          }} />
-        )}
-
       </div>
     </>
   );
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   CSS — animations TV cathodique
+   CSS — animations TV cathodique (inchangées)
 ───────────────────────────────────────────────────────────────────────── */
 const CSS = `
 
@@ -188,15 +252,9 @@ const CSS = `
     100% { filter: sepia(0.35) saturate(5) hue-rotate(192deg) brightness(1.05); }
   }
 
-  /* ── CRT Glitch — TV cathodique qui bogue ────────────────────────────
-     Cycle 10s, steps(1, end) = transitions snap sans interpolation.
-     Deux bursts : burst 1 (80-86%), burst 2 (90-96%) plus violent.
-     Chaque burst : bandes horizontales déplacées indépendamment,
-     séparation chromatique, flash phosphore, blackout de re-sync.
-  */
+  /* ── CRT Glitch ───────────────────────────────────────────────────── */
   @keyframes tsanga-crt-glitch {
 
-    /* Repos */
     0%, 79.9% {
       transform: translate(0,0) skewX(0deg);
       clip-path: none;
@@ -204,58 +262,48 @@ const CSS = `
       opacity: 1;
     }
 
-    /* === BURST 1 (80-86%) ========================================= */
-
-    /* Bande haute — glisse fort à droite */
     80% {
       transform: translate(16px, 0) skewX(-2.5deg);
       clip-path: inset(0 0 76% 0);
       filter: sepia(0) saturate(3) hue-rotate(150deg) brightness(2);
       opacity: 1;
     }
-    /* Bande milieu-haut — glisse à gauche, assombrie */
     80.8% {
       transform: translate(-13px, 0) skewX(2deg);
       clip-path: inset(24% 0 52% 0);
       filter: brightness(0.4);
       opacity: 0.85;
     }
-    /* Bande milieu-bas — glisse à droite, sursaturation rouge */
     81.6% {
       transform: translate(10px, 2px) skewX(-1.2deg);
       clip-path: inset(48% 0 28% 0);
       filter: sepia(0) saturate(14) hue-rotate(330deg) brightness(1.8);
       opacity: 1;
     }
-    /* Bande basse — glisse à gauche, cyan */
     82.4% {
       transform: translate(-9px, -2px) skewX(0.8deg);
       clip-path: inset(72% 0 6% 0);
       filter: sepia(0) saturate(10) hue-rotate(150deg) brightness(1.5);
       opacity: 0.9;
     }
-    /* Flash phosphore — tout blanc */
     83.2% {
       transform: translate(0,0);
       clip-path: none;
       filter: brightness(5) saturate(0);
       opacity: 1;
     }
-    /* Blackout de re-synchronisation */
     84% {
       transform: translate(0,0);
       clip-path: none;
       filter: brightness(0);
       opacity: 1;
     }
-    /* Récupération — léger décalage résiduel */
     84.8% {
       transform: translate(-3px, 0) skewX(-0.3deg);
       clip-path: none;
       filter: sepia(0.35) saturate(5) hue-rotate(192deg) brightness(0.88);
       opacity: 1;
     }
-    /* Retour normal */
     85.6%, 89.9% {
       transform: translate(0,0) skewX(0deg);
       clip-path: none;
@@ -263,72 +311,60 @@ const CSS = `
       opacity: 1;
     }
 
-    /* === BURST 2 (90-96%) — plus violent, plus de bandes ========== */
-
-    /* Bande très haute — displacement extrême */
     90% {
       transform: translate(20px, 0) skewX(-3.5deg);
       clip-path: inset(0 0 86% 0);
       filter: sepia(0) saturate(2) hue-rotate(330deg) brightness(3);
       opacity: 1;
     }
-    /* Bande haute-milieu */
     90.7% {
       transform: translate(-17px, 0) skewX(3deg);
       clip-path: inset(14% 0 68% 0);
       filter: brightness(0.25);
       opacity: 0.75;
     }
-    /* Bande milieu */
     91.4% {
       transform: translate(13px, -3px) skewX(-2deg);
       clip-path: inset(32% 0 48% 0);
       filter: sepia(0) saturate(18) hue-rotate(192deg) brightness(2.2);
       opacity: 1;
     }
-    /* Bande milieu-bas */
     92.1% {
       transform: translate(-10px, 2px) skewX(1.5deg);
       clip-path: inset(52% 0 28% 0);
       filter: sepia(0) saturate(12) hue-rotate(150deg) brightness(0.55);
       opacity: 0.88;
     }
-    /* Bande basse */
     92.8% {
       transform: translate(12px, 1px) skewX(-1deg);
       clip-path: inset(72% 0 10% 0);
       filter: sepia(0) saturate(16) hue-rotate(330deg) brightness(2);
       opacity: 1;
     }
-    /* Blackout complet */
     93.5% {
       transform: translate(0,0);
       clip-path: none;
       filter: brightness(0);
       opacity: 1;
     }
-    /* Flash phosphore intense */
     94.2% {
       transform: translate(0,0);
       clip-path: none;
       filter: brightness(7) saturate(0);
       opacity: 1;
     }
-    /* Wobble résiduel gauche */
     94.9% {
       transform: translate(-5px, 0) skewX(-0.6deg);
       clip-path: none;
       filter: sepia(0.35) saturate(5) hue-rotate(192deg) brightness(0.82);
       opacity: 1;
     }
-    /* Micro-correction droite */
     95.6% {
       transform: translate(2px, 0);
       clip-path: none;
       filter: sepia(0.35) saturate(5) hue-rotate(192deg) brightness(1.08);
       opacity: 1;
     }
-    /* Retour normal */
     96.3%, 100% {
       transform: translate(0,0) skewX(0deg);
       clip-path: none;
@@ -337,10 +373,7 @@ const CSS = `
     }
   }
 
-  /* ── Aberration chromatique CRT ──────────────────────────────────────
-     Synchronisé 10s — alternance cyan (hue 150°) et rouge (hue 330°)
-     par bande, décalage opposé au logo principal.
-  */
+  /* ── Aberration chromatique CRT ──────────────────────────────────── */
   @keyframes tsanga-crt-ghost {
     0%, 79.9%, 85.6%, 89.9%, 96%, 100% {
       transform: translate(0,0);
@@ -348,7 +381,6 @@ const CSS = `
       clip-path: none;
     }
 
-    /* Burst 1 */
     80% {
       transform: translate(11px, 0);
       opacity: 0.55;
@@ -375,7 +407,6 @@ const CSS = `
     }
     83.2% { opacity: 0; clip-path: none; }
 
-    /* Burst 2 */
     90% {
       transform: translate(15px, 0);
       opacity: 0.65;
@@ -409,11 +440,7 @@ const CSS = `
     93.5% { opacity: 0; clip-path: none; }
   }
 
-  /* ── Barre de balayage — ligne de re-sync cathodique ─────────────────
-     Cycle 10s linear — glisse de haut en bas lors de chaque burst.
-     Simule la ligne de faisceau électronique qui re-balaye l'écran
-     quand le signal de synchronisation verticale est perdu.
-  */
+  /* ── Barre de balayage ───────────────────────────────────────────── */
   @keyframes tsanga-crt-bar {
     0%, 79.9%             { top: 0%; opacity: 0; }
     80%                   { top: 0%; opacity: 0.6; }

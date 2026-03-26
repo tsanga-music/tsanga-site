@@ -2,11 +2,16 @@ import { motion } from 'framer-motion';
 import LogoReveal from '../ui/LogoReveal';
 import { useLang } from '../../context/LangContext';
 import { useAudio } from '../../context/AudioContext';
-import { ChevronDown } from 'lucide-react';
 
 export default function Hero() {
   const { t } = useLang();
-  const { toggle } = useAudio();
+  const { playFirst } = useAudio();
+
+  const handleListen = () => {
+    document.getElementById('music')?.scrollIntoView({ behavior: 'smooth' });
+    /* Lance le Live Set SC après que le scroll soit terminé */
+    setTimeout(() => playFirst(), 900);
+  };
   return (
     <section id="hero" style={{
       minHeight: '100vh',
@@ -66,7 +71,7 @@ export default function Hero() {
 
       {/* Main content */}
       <div style={{ textAlign: 'center', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}>
-        {/* Logo — PNG reveal with glow + glitch */}
+        {/* Logo — PNG reveal with glow + glitch + 3D tilt */}
         <LogoReveal />
 
         {/* Tagline */}
@@ -74,41 +79,50 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1.5, ease: [0.22, 1, 0.36, 1] }}
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem' }}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.9rem' }}
         >
           <div style={{
             width: 40,
             height: 1,
             background: 'rgba(74,143,255,0.5)',
-            marginBottom: '0.4rem',
+            marginBottom: '0.2rem',
           }} />
+
+          {/* Tagline principal — italic */}
           <p style={{
-            fontSize: 'clamp(1rem, 3vw, 1.4rem)',
-            letterSpacing: '0.04em',
-            color: 'rgba(255,255,255,0.55)',
-            fontWeight: 300,
+            fontSize: 'clamp(1.1rem, 3.2vw, 1.6rem)',
+            letterSpacing: '0.05em',
+            color: 'rgba(255,255,255,0.78)',
+            fontWeight: 400,
+            fontStyle: 'italic',
           }}>
             {t.hero.tagline}
           </p>
-          <p style={{
-            fontSize: '1.2rem',
-            letterSpacing: '0.06em',
-            color: 'rgba(255,255,255,0.4)',
-          }}>
-            {t.hero.sub}
-          </p>
+
+          {/* Location indicator */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <span className="hero-status-dot" />
+            <p style={{
+              fontSize: '0.8rem',
+              letterSpacing: '0.14em',
+              color: 'rgba(255,255,255,0.32)',
+              fontWeight: 400,
+              fontStyle: 'normal',
+            }}>
+              {t.hero.sub}
+            </p>
+          </div>
         </motion.div>
 
-        {/* CTA */}
+        {/* CTA — bouton Écouter uniquement */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 2, ease: [0.22, 1, 0.36, 1] }}
-          className="hero-cta"
           style={{ marginTop: '0.5rem' }}
         >
           <motion.button
-            onClick={toggle}
+            onClick={handleListen}
             whileHover={{ background: 'rgba(74,143,255,0.2)', borderColor: '#4a8fff' }}
             whileTap={{ scale: 0.96 }}
             style={{
@@ -126,53 +140,8 @@ export default function Hero() {
           >
             {t.hero.cta}
           </motion.button>
-
-          <motion.button
-            onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })}
-            whileHover={{ background: 'rgba(255,255,255,0.05)' }}
-            whileTap={{ scale: 0.96 }}
-            style={{
-              padding: '1rem 2.5rem',
-              background: 'transparent',
-              border: '1px solid rgba(255,255,255,0.12)',
-              borderRadius: 2,
-              color: 'rgba(255,255,255,0.6)',
-              fontSize: '1rem',
-              letterSpacing: '0.04em',
-              cursor: 'none',
-              fontFamily: 'inherit',
-              transition: 'background 0.3s',
-            }}
-          >
-            {t.hero.scroll}
-          </motion.button>
         </motion.div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2.5, duration: 1 }}
-        style={{
-          position: 'absolute',
-          bottom: '2.5rem',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '0.5rem',
-          color: 'rgba(255,255,255,0.25)',
-        }}
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <ChevronDown size={18} />
-        </motion.div>
-      </motion.div>
 
       {/* Bottom gradient */}
       <div style={{

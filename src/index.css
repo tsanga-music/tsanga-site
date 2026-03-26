@@ -75,6 +75,37 @@ button:hover, a:hover {
   animation: nav-logo-cycle 3s linear infinite;
 }
 
+/* ── Police système — override Berliner Condensed pour éléments UI ─── */
+/* Utile pour petits labels, chiffres, boutons dont la lisibilité prime  */
+.font-system,
+.font-system * {
+  font-family: 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif !important;
+  letter-spacing: 0.08em !important;
+}
+
+/* ── Status dots — navbar (nav-status-dot) et hero (hero-status-dot) ── */
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1;   box-shadow: 0 0 6px rgba(74,143,255,0.9); }
+  50%       { opacity: 0.3; box-shadow: 0 0 2px rgba(74,143,255,0.2); }
+}
+
+.nav-status-dot,
+.hero-status-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4a8fff;
+  box-shadow: 0 0 6px rgba(74,143,255,0.9);
+  flex-shrink: 0;
+  animation: dot-pulse 2.4s ease-in-out infinite;
+}
+
+.hero-status-dot {
+  width: 4px;
+  height: 4px;
+}
+
 /* ── Scrollbar ─────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg); }

@@ -20,8 +20,9 @@ export default function AudioPlayer() {
   /* ── Mode SC : branché sur SoundCloud ─────────────────────────── */
   const sc = !!scTitle;
 
-  const displayTitle    = sc ? scTitle         : track.title;
-  const displaySub      = sc ? 'SoundCloud'    : `${track.album} · ${track.duration}`;
+  /* En standby (pas de SC actif), on affiche le Live Set comme invitation */
+  const displayTitle    = sc ? scTitle         : playing ? track.title : 'Live Set 2026';
+  const displaySub      = sc ? 'SoundCloud'    : playing ? `${track.album} · ${track.duration}` : '↓ Section Musique';
   const displayProgress = sc ? scProgress      : progress;
   const isPlaying       = sc ? scPlaying       : playing;
 
