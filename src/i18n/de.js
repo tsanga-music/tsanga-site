@@ -8,7 +8,7 @@ const de = {
   },
   hero: {
     tagline: 'Architekt der Klangstille',
-    sub: 'Electro Darkwave · Brüssel',
+    sub: 'Electro Dark Wave · Brüssel',
     cta: 'Anhören',
     scroll: 'Scrollen',
   },

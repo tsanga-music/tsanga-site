@@ -97,6 +97,19 @@ export default function LogoReveal() {
     rawY.set(0.5);
   }, [rawX, rawY]);
 
+  const handleTouchMove = useCallback((e) => {
+    const touch = e.touches[0];
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect || !touch) return;
+    rawX.set((touch.clientX - rect.left) / rect.width);
+    rawY.set((touch.clientY - rect.top) / rect.height);
+  }, [rawX, rawY]);
+
+  const handleTouchEnd = useCallback(() => {
+    rawX.set(0.5);
+    rawY.set(0.5);
+  }, [rawX, rawY]);
+
   return (
     <>
       <style>{CSS}</style>
@@ -106,6 +119,8 @@ export default function LogoReveal() {
         ref={containerRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         style={{
           position: 'relative',
           display: 'inline-block',

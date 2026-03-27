@@ -8,7 +8,7 @@ const en = {
   },
   hero: {
     tagline: 'Architect of sonic void',
-    sub: 'Electro Darkwave · Brussels',
+    sub: 'Electro Dark Wave · Brussels',
     cta: 'Listen',
     scroll: 'Scroll',
   },

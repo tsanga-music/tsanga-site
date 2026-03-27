@@ -110,6 +110,56 @@ export function AudioProvider({ children }) {
     scWidgetsRef.current.forEach(w => w?.setVolume(Math.round(v * 100)));
   }, []);
 
+  /* ── Media Session API — contrôles écran verrouillé ────────────── */
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return;
+    const title = scTitle || track?.title || 'Live Set 2026';
+    navigator.mediaSession.metadata = new window.MediaMetadata({
+      title,
+      artist: 'Tsanga',
+      album: track?.album ?? '',
+      artwork: [{ src: '/favicon.png', sizes: '512x512', type: 'image/png' }],
+    });
+  }, [scTitle, track]);
+
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return;
+    navigator.mediaSession.setActionHandler('play',  () => {
+      const w = activeWidgetRef.current;
+      if (w) w.play(); else if (audioRef.current) audioRef.current.play();
+    });
+    navigator.mediaSession.setActionHandler('pause', () => {
+      const w = activeWidgetRef.current;
+      if (w) w.pause(); else if (audioRef.current) audioRef.current.pause();
+    });
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      const idx = activeIdxRef.current;
+      if (idx > 0) {
+        activeWidgetRef.current?.pause();
+        const pi = idx - 1;
+        activeIdxRef.current = pi;
+        activeWidgetRef.current = scWidgetsRef.current[pi];
+        scWidgetsRef.current[pi]?.play();
+      }
+    });
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+      const idx = activeIdxRef.current;
+      const widgets = scWidgetsRef.current;
+      if (idx >= 0 && idx < widgets.length - 1) {
+        activeWidgetRef.current?.pause();
+        const ni = idx + 1;
+        activeIdxRef.current = ni;
+        activeWidgetRef.current = widgets[ni];
+        widgets[ni]?.play();
+      }
+    });
+    return () => {
+      ['play','pause','previoustrack','nexttrack'].forEach(a => {
+        try { navigator.mediaSession.setActionHandler(a, null); } catch {}
+      });
+    };
+  }, []);
+
   /* ── Démarre le premier widget SC disponible (Live Set) ─────────── */
   const playFirst = useCallback(() => {
     const w = scWidgetsRef.current[0];

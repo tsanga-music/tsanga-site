@@ -70,7 +70,7 @@ export default function Contact() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const { name, email, message } = form;
-    window.location.href = `mailto:management@tsanga.be?subject=${encodeURIComponent(`Message de ${name}`)}&body=${encodeURIComponent(`De: ${name}\nEmail: ${email}\n\n${message}`)}`;
+    window.location.href = `mailto:anthony.tsanga@gmail.com?subject=${encodeURIComponent(`Message de ${name}`)}&body=${encodeURIComponent(`De: ${name}\nEmail: ${email}\n\n${message}`)}`;
     setSent(true);
     setTimeout(() => setSent(false), 3000);
     setForm({ name: '', email: '', message: '' });
@@ -148,9 +148,9 @@ export default function Contact() {
 
           {/* Contact info blocks */}
           {[
-            { label: t.contact.management, email: 'management@tsanga.be' },
-            { label: t.contact.booking, email: 'booking@tsanga.be' },
-            { label: t.contact.press, email: 'press@tsanga.be' },
+            { label: t.contact.management, email: 'anthony.tsanga@gmail.com' },
+            { label: t.contact.booking,    email: 'anthony.tsanga@gmail.com' },
+            { label: t.contact.press,      email: 'anthony.tsanga@gmail.com' },
           ].map((item, i) => (
             <motion.div
               key={item.label}
@@ -195,12 +195,14 @@ export default function Contact() {
             style={{ marginTop: '2rem', display: 'flex', gap: '1rem' }}
           >
             {[
-              { Icon: Instagram, label: '@tsanga_music' },
-              { Icon: Youtube, label: 'TSANGA' },
-            ].map(({ Icon, label }) => (
+              { Icon: Instagram, label: '@tsanga_music', href: 'https://www.instagram.com/tsanga_music/' },
+              { Icon: Youtube, label: 'Lost My Way', href: 'https://youtu.be/sGycQ6l_Lc8?si=2y4b1WRvhweHPsFJ' },
+            ].map(({ Icon, label, href }) => (
               <motion.a
                 key={label}
-                href="#"
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ color: 'rgba(255,255,255,0.7)', borderColor: 'rgba(255,255,255,0.3)' }}
                 style={{
                   display: 'flex',
