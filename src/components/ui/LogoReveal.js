@@ -71,7 +71,7 @@ export default function LogoReveal() {
   const rawY = useMotionValue(0.5);
 
   /* ── Spring physics — fluide, pas de rebond excessif ────────────────── */
-  const springCfg = { stiffness: 150, damping: 18, mass: 1 };
+  const springCfg = { stiffness: 55, damping: 26, mass: 1.2 };
   const sX = useSpring(rawX, springCfg);
   const sY = useSpring(rawY, springCfg);
 
@@ -141,7 +141,7 @@ export default function LogoReveal() {
           <motion.div
             initial={{ opacity: 0, scale: 0.92, filter: 'blur(18px)' }}
             animate={src ? { opacity: 1, scale: 1, filter: 'blur(0px)' } : { opacity: 0 }}
-            transition={{ duration: 1.9, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 3.6, ease: [0.16, 1, 0.3, 1] }}
             style={{ position: 'relative' }}
           >
 
@@ -153,7 +153,7 @@ export default function LogoReveal() {
                 mixBlendMode: 'screen',
                 transform: 'scale(1.04)',
                 pointerEvents: 'none', zIndex: 0,
-                animation: 'tsanga-glow1 6s linear infinite',
+                animation: 'tsanga-glow1 14s linear infinite',
               }} />
             )}
 
@@ -165,7 +165,7 @@ export default function LogoReveal() {
                 mixBlendMode: 'screen',
                 transform: 'scale(1.08)',
                 pointerEvents: 'none', zIndex: 0,
-                animation: 'tsanga-glow2 8s linear infinite',
+                animation: 'tsanga-glow2 20s linear infinite',
               }} />
             )}
 
@@ -178,7 +178,7 @@ export default function LogoReveal() {
                   display: 'block',
                   width: 'clamp(340px, 62vw, 720px)',
                   height: 'auto',
-                  animation: 'tsanga-crt-glitch 10s steps(1, end) infinite, tsanga-tint 12s linear infinite',
+                  animation: 'tsanga-crt-glitch 22s steps(1, end) infinite, tsanga-tint 28s linear infinite',
                   position: 'relative',
                   zIndex: 2,
                 }}
@@ -205,7 +205,7 @@ export default function LogoReveal() {
                 mixBlendMode: 'screen',
                 opacity: 0,
                 pointerEvents: 'none', zIndex: 4,
-                animation: 'tsanga-crt-ghost 10s steps(1, end) infinite',
+                animation: 'tsanga-crt-ghost 22s steps(1, end) infinite',
               }} />
             )}
 
@@ -224,7 +224,7 @@ export default function LogoReveal() {
                 height: 6,
                 background: 'linear-gradient(90deg, transparent 0%, rgba(180,220,255,0.22) 25%, rgba(200,230,255,0.32) 50%, rgba(180,220,255,0.22) 75%, transparent 100%)',
                 pointerEvents: 'none', zIndex: 6,
-                animation: 'tsanga-crt-bar 10s linear infinite',
+                animation: 'tsanga-crt-bar 22s linear infinite',
               }} />
             )}
 

@@ -43,7 +43,7 @@ export function useScrollAnimation(options = {}) {
     const toVars   = {
       opacity: 1,
       y: 0,
-      duration: options.duration ?? 0.8,
+      duration: options.duration ?? 1.8,
       delay:    options.delay    ?? 0,
       ease,
       scrollTrigger: {
