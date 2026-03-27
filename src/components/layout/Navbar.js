@@ -12,6 +12,7 @@ export default function Navbar() {
   const { lang, setLang, t }  = useLang();
   const { count, setOpen }    = useCart();
   const [scrolled,    setScrolled]    = useState(false);
+  const [scrollPct,   setScrollPct]   = useState(0);
   const [mobileOpen,  setMobileOpen]  = useState(false);
   const [langOpen,    setLangOpen]    = useState(false);
   const [navOpen,     setNavOpen]     = useState(false);
@@ -19,9 +20,14 @@ export default function Navbar() {
   const langRef    = useRef(null);
   const navDropRef = useRef(null);
 
-  /* ── Scroll ─────────────────────────────────────────────────────── */
+  /* ── Scroll + progress ───────────────────────────────────────────── */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
+    const onScroll = () => {
+      const scrollY = window.scrollY;
+      setScrolled(scrollY > 80);
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollPct(maxScroll > 0 ? (scrollY / maxScroll) * 100 : 0);
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -87,6 +93,13 @@ export default function Navbar() {
           transition: 'background 0.4s, border-color 0.4s, backdrop-filter 0.4s',
         }}
       >
+        {/* Scroll progress indicator — ligne en bas de la navbar */}
+        <div className="scroll-progress-track">
+          <div
+            className="scroll-progress-fill"
+            style={{ width: `${scrollPct}%` }}
+          />
+        </div>
         {/* ── Logo (gauche) — s'efface sur mobile au scroll ────────── */}
         <motion.button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
