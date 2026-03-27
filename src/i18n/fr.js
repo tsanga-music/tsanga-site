@@ -8,7 +8,7 @@ const fr = {
   },
   hero: {
     tagline: 'Architecte du vide sonore',
-    sub: 'Electro Darkwave · Bruxelles',
+    sub: 'Electro Dark Wave · Bruxelles',
     cta: 'Écouter',
     scroll: 'Défiler',
   },

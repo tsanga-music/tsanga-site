@@ -87,10 +87,13 @@ export default function Navbar() {
           transition: 'background 0.4s, border-color 0.4s, backdrop-filter 0.4s',
         }}
       >
-        {/* ── Logo (gauche) ────────────────────────────────────────── */}
-        <button
+        {/* ── Logo (gauche) — s'efface sur mobile au scroll ────────── */}
+        <motion.button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          animate={{ opacity: scrolled ? 0.3 : 1 }}
+          transition={{ duration: 0.5 }}
           style={{ background: 'none', border: 'none', cursor: 'none', padding: 0, flexShrink: 0 }}
+          className="nav-logo-btn"
         >
           <img
             src={navLogoSrc}
@@ -98,7 +101,7 @@ export default function Navbar() {
             className="nav-logo"
             style={{ height: 32, width: 'auto', display: 'block' }}
           />
-        </button>
+        </motion.button>
 
         {/* ── Centre absolu — horloge (top) ou menu dropdown (scroll) ─ */}
         <div style={{

@@ -2,7 +2,7 @@ import { LangProvider } from './context/LangContext';
 import { CartProvider } from './context/CartContext';
 import { AudioProvider } from './context/AudioContext';
 import { useScrollAnimation } from './hooks/useScrollAnimation';
-import MistCanvas from './components/canvas/MistCanvas';
+import WaterBackground from './components/WaterBackground';
 import CustomCursor from './components/cursor/CustomCursor';
 import Navbar from './components/layout/Navbar';
 import AudioPlayer from './components/layout/AudioPlayer';
@@ -29,7 +29,7 @@ export default function App() {
       <CartProvider>
         <AudioProvider>
           {/* Fixed layers */}
-          <MistCanvas />
+          <WaterBackground />
           <CustomCursor />
 
           {/* Main layout */}
