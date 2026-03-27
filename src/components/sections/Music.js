@@ -283,7 +283,7 @@ function ExclusiveEmbed({ item, index }) {
         backdropFilter: 'blur(6px)',
         boxShadow: '0 0 12px rgba(255,40,90,0.5)',
       }}>
-        EXCLUSIF
+        Exclusif
       </div>
       <div style={{
         borderRadius: 6, overflow: 'hidden',
@@ -430,7 +430,7 @@ export default function Music() {
       </div>
 
       {/* ── Live Set ───────────────────────────────────────────────── */}
-      <SectionLabel>LIVE SET 2026</SectionLabel>
+      <SectionLabel>Live Set 2026</SectionLabel>
       <LargeEmbed item={LIVE_SET} />
 
       {/* ── EP — pochette à gauche, embed à droite ─────────────────── */}
@@ -510,7 +510,7 @@ export default function Music() {
       </div>
 
       {/* ── Exclusifs ──────────────────────────────────────────────── */}
-      <SectionLabel mt>EXCLUSIFS</SectionLabel>
+      <SectionLabel mt>Exclusifs</SectionLabel>
       <div className="embeds-grid">
         {EXCLUSIVES.map((item, i) => (
           <ExclusiveEmbed key={item.path} item={item} index={i} />
@@ -518,7 +518,7 @@ export default function Music() {
       </div>
 
       {/* ── Singles ────────────────────────────────────────────────── */}
-      <SectionLabel mt>SINGLES</SectionLabel>
+      <SectionLabel mt>Singles</SectionLabel>
       <div className="embeds-grid">
         {SINGLES.map((item, i) => (
           <SmallEmbed key={item.path} item={item} index={i} />

@@ -126,12 +126,10 @@ export default function Hero() {
             style={{
               padding: '1rem 2.5rem',
               background: 'transparent',
-              border: '1px solid rgba(74,143,255,0.5)',
-              borderRadius: 2,
+              border: 'none',
               color: '#fff',
               fontSize: '1rem',
               letterSpacing: '0.04em',
-              transition: 'background 0.3s, border-color 0.3s',
             }}
           >
             {t.hero.cta}

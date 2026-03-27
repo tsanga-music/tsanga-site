@@ -161,6 +161,48 @@ export default function WaterBackground() {
         }
       })
 
+      /* ── Courbes verticales (colonnes d'eau) ─────────────────────── */
+      const VCOLS = 12
+      for (let ci = 0; ci < VCOLS; ci++) {
+        const baseX  = (ci / (VCOLS - 1)) * W
+        const freq   = 0.007 + (ci % 3) * 0.003
+        const amp    = 14 + (ci % 4) * 6
+        const speed  = 0.06 + (ci % 5) * 0.02
+        const ph     = ci * 0.72
+        const progress = ci / (VCOLS - 1)
+        const brightness = 0.08 + progress * 0.10
+
+        /* Zone d'influence souris sur cette colonne */
+        const xDist  = Math.abs(mouse.x - baseX)
+        const mInflX = Math.max(0, 1 - xDist / (W * 0.15))
+
+        const vpts = []
+        const vstep = 4
+        for (let y = 0; y <= H; y += vstep) {
+          const p   = t * speed + ph
+          let dx    = Math.sin(y * freq + p)             * amp
+                    + Math.sin(y * freq * 1.6 - p * 0.5) * amp * 0.35
+                    + Math.sin(y * freq * 0.4 + p * 0.3) * amp * 0.18
+
+          if (mInflX > 0) {
+            const yDist2  = Math.abs(y - mouse.y)
+            const mInflY2 = Math.max(0, 1 - yDist2 / 220)
+            const push2   = Math.sin((y - mouse.y) * 0.025) * vel.x * 0.30 * mInflX * mInflY2
+            const dip2    = -Math.exp(-(yDist2**2) / (2 * 110**2)) * mInflX * 22
+            dx += push2 + dip2
+          }
+
+          vpts.push({ x: baseX + dx, y })
+        }
+
+        ctx.beginPath()
+        vpts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y))
+        const strokeAv = (brightness * 1.4 + mInflX * 0.18).toFixed(3)
+        ctx.strokeStyle = `rgba(170,182,200,${strokeAv})`
+        ctx.lineWidth   = 0.6 + progress * 0.5
+        ctx.stroke()
+      }
+
       /* ── Ripples souris ──────────────────────────────────────────── */
       for (let i = ripples.length - 1; i >= 0; i--) {
         const rp = ripples[i]
