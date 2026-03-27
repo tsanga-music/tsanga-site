@@ -206,7 +206,7 @@ export default function Gallery() {
         <motion.div
           initial={{ scaleX: 50 }}
           animate={titleInView ? { scaleX: 1 } : { scaleX: 50 }}
-          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+          transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           style={{ width: 48, height: 1, background: '#4a8fff', marginBottom: '1.2rem', transformOrigin: 'left' }}
         />
         <motion.h2
@@ -227,9 +227,9 @@ export default function Gallery() {
           }}
           transition={{
             opacity: titleInView
-              ? { duration: 3.5, delay: 0.2, times: [0, 0.06, 0.11, 0.17, 0.24, 0.32, 0.39, 0.46, 0.54, 0.61, 0.78, 1] }
-              : { duration: 0.4 },
-            y: { duration: 0.8, delay: 0.15 },
+              ? { duration: 5.0, delay: 0.3, times: [0, 0.06, 0.11, 0.17, 0.24, 0.32, 0.39, 0.46, 0.54, 0.61, 0.78, 1] }
+              : { duration: 0.6 },
+            y: { duration: 1.6, delay: 0.2 },
             filter: glow.glowing
               ? { duration: 3, repeat: Infinity, ease: 'easeInOut' }
               : { duration: 1.2, ease: 'easeOut' },
@@ -250,7 +250,7 @@ export default function Gallery() {
         <motion.p
           initial={{ opacity: 0 }}
           animate={titleInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          transition={{ duration: 1.6, delay: 0.5 }}
           style={{
             fontSize: '0.75rem',
             letterSpacing: '0.04em',

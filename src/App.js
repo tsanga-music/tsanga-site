@@ -20,7 +20,7 @@ import Contact from './components/sections/Contact';
    Chaque section glisse depuis y:50 + blur(8px) → y:0 + blur(0px).
 ────────────────────────────────────────────────────────────────────────── */
 function SectionReveal({ children, delay = 0 }) {
-  const ref = useScrollAnimation({ y: 50, blur: 8, duration: 1.2, delay, ease: 'blurEase' });
+  const ref = useScrollAnimation({ y: 50, blur: 8, duration: 2.0, delay, ease: 'blurEase' });
   return <div ref={ref}>{children}</div>;
 }
 
