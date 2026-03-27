@@ -275,7 +275,15 @@ export default function Gallery() {
           transition: opacity 0.4s;
         }
         .tsanga-swiper .swiper-slide-active { opacity: 1; }
-        .tsanga-swiper .swiper-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .tsanga-swiper .swiper-slide img {
+          width: 100%; height: 100%; object-fit: cover; display: block;
+          filter: grayscale(85%) brightness(0.9);
+          transition: filter 0.55s ease;
+        }
+        .tsanga-swiper .swiper-slide:hover img,
+        .tsanga-swiper .swiper-slide-active img {
+          filter: grayscale(0%) brightness(1);
+        }
         .tsanga-swiper .swiper-button-prev,
         .tsanga-swiper .swiper-button-next {
           color: rgba(255,255,255,0.45) !important;

@@ -3,6 +3,7 @@ import { CartProvider } from './context/CartContext';
 import { AudioProvider } from './context/AudioContext';
 import { useScrollAnimation } from './hooks/useScrollAnimation';
 import WaterBackground from './components/WaterBackground';
+import NoiseOverlay from './components/ui/NoiseOverlay';
 import CustomCursor from './components/cursor/CustomCursor';
 import Navbar from './components/layout/Navbar';
 import AudioPlayer from './components/layout/AudioPlayer';
@@ -15,11 +16,11 @@ import Shop from './components/sections/Shop';
 import Lives from './components/sections/Lives';
 import Contact from './components/sections/Contact';
 
-/* ── Transition d'entrée pour chaque section via GSAP ScrollTrigger ──
-   Chaque section glisse depuis y:70 → 0 avec fade. once (reverse: false).
-─────────────────────────────────────────────────────────────────────── */
+/* ── Blur-reveal au scroll — inspiré du projet GSAP/Lenis de référence ──
+   Chaque section glisse depuis y:50 + blur(8px) → y:0 + blur(0px).
+────────────────────────────────────────────────────────────────────────── */
 function SectionReveal({ children, delay = 0 }) {
-  const ref = useScrollAnimation({ y: 70, duration: 1.15, delay, ease: 'power3.out' });
+  const ref = useScrollAnimation({ y: 50, blur: 8, duration: 1.2, delay, ease: 'blurEase' });
   return <div ref={ref}>{children}</div>;
 }
 
@@ -30,6 +31,7 @@ export default function App() {
         <AudioProvider>
           {/* Fixed layers */}
           <WaterBackground />
+          <NoiseOverlay />
           <CustomCursor />
 
           {/* Main layout */}
