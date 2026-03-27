@@ -1,29 +1,25 @@
 // src/components/WaterBackground.jsx
-// Surface d'eau nocturne — courbes remplies + reflets sur crêtes
+// Surface d'eau nocturne plein écran — gris/blanc, ondulations souris visibles
 
 import { useRef, useEffect } from 'react'
 
-/* ── Couches d'eau — de la plus profonde à la surface ──────────────── */
+/* ── 14 couches sur toute la hauteur de l'écran ───────────────────── */
 const LAYERS = [
-  // { freq, amp, speed, phase, y (0=top 1=bottom), fillAlpha, strokeAlpha, strokeW }
-  { freq: 0.008, amp: 30, speed: 0.09, phase: 0.0, y: 0.40, fill: 0.06, stroke: 0.10, sw: 1.2 },
-  { freq: 0.013, amp: 22, speed: 0.13, phase: 1.2, y: 0.48, fill: 0.07, stroke: 0.12, sw: 1.0 },
-  { freq: 0.010, amp: 26, speed: 0.10, phase: 2.4, y: 0.54, fill: 0.08, stroke: 0.14, sw: 1.4 },
-  { freq: 0.017, amp: 16, speed: 0.18, phase: 0.8, y: 0.60, fill: 0.09, stroke: 0.16, sw: 1.0 },
-  { freq: 0.011, amp: 28, speed: 0.08, phase: 3.5, y: 0.65, fill: 0.10, stroke: 0.18, sw: 1.6 },
-  { freq: 0.020, amp: 12, speed: 0.22, phase: 1.7, y: 0.70, fill: 0.11, stroke: 0.20, sw: 0.8 },
-  { freq: 0.009, amp: 32, speed: 0.07, phase: 4.2, y: 0.76, fill: 0.13, stroke: 0.24, sw: 1.8 },
-  { freq: 0.015, amp: 18, speed: 0.15, phase: 2.1, y: 0.82, fill: 0.15, stroke: 0.26, sw: 1.2 },
+  { freq: 0.007, amp: 22, speed: 0.07, ph: 0.0,  y: 0.04 },
+  { freq: 0.011, amp: 18, speed: 0.10, ph: 1.3,  y: 0.12 },
+  { freq: 0.009, amp: 24, speed: 0.08, ph: 2.6,  y: 0.20 },
+  { freq: 0.014, amp: 16, speed: 0.14, ph: 0.9,  y: 0.28 },
+  { freq: 0.008, amp: 28, speed: 0.07, ph: 3.8,  y: 0.36 },
+  { freq: 0.016, amp: 14, speed: 0.17, ph: 1.5,  y: 0.44 },
+  { freq: 0.010, amp: 26, speed: 0.09, ph: 4.1,  y: 0.52 },
+  { freq: 0.013, amp: 20, speed: 0.12, ph: 2.2,  y: 0.59 },
+  { freq: 0.018, amp: 12, speed: 0.20, ph: 0.5,  y: 0.66 },
+  { freq: 0.008, amp: 30, speed: 0.06, ph: 3.3,  y: 0.73 },
+  { freq: 0.015, amp: 17, speed: 0.15, ph: 1.1,  y: 0.80 },
+  { freq: 0.010, amp: 23, speed: 0.10, ph: 4.7,  y: 0.86 },
+  { freq: 0.012, amp: 15, speed: 0.13, ph: 2.8,  y: 0.92 },
+  { freq: 0.009, amp: 20, speed: 0.08, ph: 0.3,  y: 0.97 },
 ]
-
-function getWaveY(layer, x, t, W) {
-  const p  = t * layer.speed + layer.phase
-  return (
-    Math.sin(x * layer.freq + p)             * layer.amp +
-    Math.sin(x * layer.freq * 1.6 - p * 0.7) * layer.amp * 0.40 +
-    Math.sin(x * layer.freq * 0.5 + p * 0.3) * layer.amp * 0.25
-  )
-}
 
 export default function WaterBackground() {
   const canvasRef = useRef(null)
@@ -33,7 +29,12 @@ export default function WaterBackground() {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     let animId, t = 0
-    const mouse = { x: -9999, y: -9999 }
+
+    // Mouse state
+    const mouse  = { x: -9999, y: -9999 }
+    const prev   = { x: -9999, y: -9999 }
+    const vel    = { x: 0, y: 0 }          // velocity
+    const ripples = []                      // liste de ripples actifs
 
     const resize = () => {
       canvas.width  = window.innerWidth
@@ -42,8 +43,34 @@ export default function WaterBackground() {
     resize()
     window.addEventListener('resize', resize)
 
-    const onMouseMove = (e) => { mouse.x = e.clientX; mouse.y = e.clientY }
-    const onTouchMove = (e) => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY }
+    const onMouseMove = (e) => {
+      vel.x = e.clientX - mouse.x
+      vel.y = e.clientY - mouse.y
+      prev.x = mouse.x; prev.y = mouse.y
+      mouse.x = e.clientX; mouse.y = e.clientY
+
+      const speed = Math.sqrt(vel.x**2 + vel.y**2)
+      if (speed > 2) {
+        ripples.push({
+          x: mouse.x, y: mouse.y,
+          r: 0, maxR: 80 + speed * 3,
+          alpha: Math.min(0.7, speed * 0.03),
+          born: t,
+        })
+        if (ripples.length > 18) ripples.shift()
+      }
+    }
+    const onTouchMove = (e) => {
+      const touch = e.touches[0]
+      vel.x = touch.clientX - mouse.x
+      vel.y = touch.clientY - mouse.y
+      mouse.x = touch.clientX; mouse.y = touch.clientY
+      const speed = Math.sqrt(vel.x**2 + vel.y**2)
+      if (speed > 1) {
+        ripples.push({ x: mouse.x, y: mouse.y, r: 0, maxR: 100 + speed * 4, alpha: 0.5, born: t })
+        if (ripples.length > 12) ripples.shift()
+      }
+    }
     window.addEventListener('mousemove', onMouseMove)
     window.addEventListener('touchmove', onTouchMove, { passive: true })
 
@@ -51,90 +78,125 @@ export default function WaterBackground() {
       const W = canvas.width
       const H = canvas.height
 
-      /* ── Fond ──────────────────────────────────────────────────── */
-      ctx.fillStyle = '#010208'
+      /* Fond presque noir, teinte très légèrement froide */
+      ctx.fillStyle = '#020305'
       ctx.fillRect(0, 0, W, H)
 
-      /* ── Lueur lune diffuse en haut-centre ─────────────────────── */
-      const moonGrad = ctx.createRadialGradient(W * 0.5, 0, 0, W * 0.5, 0, H * 0.7)
-      moonGrad.addColorStop(0,    'rgba(30,50,110,0.22)')
-      moonGrad.addColorStop(0.35, 'rgba(15,28,65,0.10)')
-      moonGrad.addColorStop(1,    'rgba(0,0,0,0)')
-      ctx.fillStyle = moonGrad
+      /* Lueur lune très diffuse — centre haut */
+      const lg = ctx.createRadialGradient(W * 0.5, -H * 0.1, 0, W * 0.5, -H * 0.1, H * 0.9)
+      lg.addColorStop(0,   'rgba(50,60,80,0.18)')
+      lg.addColorStop(0.5, 'rgba(20,26,40,0.06)')
+      lg.addColorStop(1,   'rgba(0,0,0,0)')
+      ctx.fillStyle = lg
       ctx.fillRect(0, 0, W, H)
 
-      /* ── Couches d'eau ─────────────────────────────────────────── */
-      LAYERS.forEach((layer) => {
+      /* ── Vagues plein écran ──────────────────────────────────────── */
+      LAYERS.forEach((layer, li) => {
         const baseY = layer.y * H
+        const progress = layer.y                     // 0=haut → 1=bas
+        const brightness = 0.12 + progress * 0.22   // plus lumineux en bas
 
-        // Perturbation douce au survol
+        /* Zone d'influence souris sur cette vague */
         const yDist  = Math.abs(mouse.y - baseY)
-        const mBoost = Math.max(0, 1 - yDist / (H * 0.15)) * 0.6
+        const mInflY = Math.max(0, 1 - yDist / (H * 0.20))
 
-        /* Calcul des points de la vague */
+        /* Points de la vague */
         const pts = []
-        for (let x = 0; x <= W; x += 3) {
-          const xDist   = Math.abs(x - mouse.x)
-          const mxBoost = Math.max(0, 1 - xDist / 200) * mBoost
-          const dy = getWaveY(layer, x, t, W) * (1 + mxBoost * 0.4)
+        const step = 3
+        for (let x = 0; x <= W; x += step) {
+          const p  = t * layer.speed + layer.ph
+          let dy  = Math.sin(x * layer.freq + p)             * layer.amp
+                  + Math.sin(x * layer.freq * 1.7 - p * 0.6) * layer.amp * 0.38
+                  + Math.sin(x * layer.freq * 0.5 + p * 0.3) * layer.amp * 0.20
+
+          /* Déformation souris — visible et organique */
+          if (mInflY > 0) {
+            const xDist   = Math.abs(x - mouse.x)
+            const mInflX  = Math.max(0, 1 - xDist / 220)
+            const mEffect = mInflY * mInflX
+            // Creux au passage de la souris, crêtes latérales
+            const push = Math.sin((x - mouse.x) * 0.025) * vel.y * 0.35 * mEffect
+            const dip  = -Math.exp(-(xDist**2) / (2 * 110**2)) * mInflY * 28
+            dy += push + dip
+          }
+
           pts.push({ x, y: baseY + dy })
         }
 
-        /* ── Remplissage (eau en dessous de la vague) ───────────── */
+        /* Remplissage dessous la vague */
         ctx.beginPath()
         ctx.moveTo(0, H)
         pts.forEach(p => ctx.lineTo(p.x, p.y))
         ctx.lineTo(W, H)
         ctx.closePath()
 
-        const fillGrad = ctx.createLinearGradient(0, baseY - layer.amp, 0, H)
-        fillGrad.addColorStop(0,   `rgba(20,45,100,${layer.fill})`)
-        fillGrad.addColorStop(0.4, `rgba(10,25,60, ${layer.fill * 0.7})`)
-        fillGrad.addColorStop(1,   `rgba(1,3,15,  ${layer.fill * 0.4})`)
-        ctx.fillStyle = fillGrad
+        const fg = ctx.createLinearGradient(0, baseY - layer.amp, 0, H)
+        const b  = brightness
+        fg.addColorStop(0,   `rgba(${Math.round(b*120)},${Math.round(b*130)},${Math.round(b*145)},${(b * 0.7).toFixed(2)})`)
+        fg.addColorStop(0.5, `rgba(5,7,14,${(b * 0.4).toFixed(2)})`)
+        fg.addColorStop(1,   'rgba(2,3,5,0.0)')
+        ctx.fillStyle = fg
         ctx.fill()
 
-        /* ── Contour de la vague (crête) ────────────────────────── */
+        /* Crête — trait gris/blanc */
         ctx.beginPath()
         pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y))
-        const alphaBoost = 1 + mBoost * 0.5
-        ctx.strokeStyle = `rgba(70,120,210,${(layer.stroke * alphaBoost).toFixed(3)})`
-        ctx.lineWidth   = layer.sw
+        const strokeA = (brightness * 1.6 + mInflY * 0.25).toFixed(3)
+        ctx.strokeStyle = `rgba(180,190,205,${strokeA})`
+        ctx.lineWidth   = 0.8 + progress * 0.8
         ctx.stroke()
 
-        /* ── Reflets scintillants sur les crêtes ────────────────── */
-        if (layer.y > 0.5) {
-          for (let i = 1; i < pts.length - 1; i++) {
-            const prev = pts[i - 1], curr = pts[i], next = pts[i + 1]
-            // Détecte les pics locaux (crête)
-            if (curr.y < prev.y && curr.y < next.y) {
-              const shimmerPhase = Math.sin(t * 2.5 + curr.x * 0.03)
-              if (shimmerPhase > 0.55) {
-                const shimA = (shimmerPhase - 0.55) / 0.45 * 0.35 * (layer.y - 0.5) * 2
-                ctx.beginPath()
-                ctx.arc(curr.x, curr.y, 1.2 + shimmerPhase, 0, Math.PI * 2)
-                ctx.fillStyle = `rgba(160,200,255,${shimA.toFixed(3)})`
-                ctx.fill()
-              }
+        /* Scintillements blancs sur les crêtes locales */
+        for (let i = 2; i < pts.length - 2; i += 3) {
+          const p = pts[i]
+          if (p.y < pts[i-1].y && p.y < pts[i+1].y) {
+            const shimA = Math.max(0, Math.sin(t * 3 + p.x * 0.05 + li)) * brightness * 0.55
+            if (shimA > 0.03) {
+              ctx.beginPath()
+              ctx.arc(p.x, p.y, 0.9 + shimA * 3, 0, Math.PI * 2)
+              ctx.fillStyle = `rgba(215,220,230,${shimA.toFixed(3)})`
+              ctx.fill()
             }
           }
         }
       })
 
-      /* ── Brume ─────────────────────────────────────────────────── */
-      // Haut de l'image
-      const topFog = ctx.createLinearGradient(0, 0, 0, H * 0.35)
-      topFog.addColorStop(0,   'rgba(1,2,8,0.95)')
-      topFog.addColorStop(1,   'rgba(1,2,8,0.0)')
-      ctx.fillStyle = topFog
-      ctx.fillRect(0, 0, W, H)
+      /* ── Ripples souris ──────────────────────────────────────────── */
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const rp = ripples[i]
+        rp.r += 2.4
+        const life  = rp.r / rp.maxR
+        const alpha = rp.alpha * (1 - life) * (1 - life)
 
-      // Bas de l'image
-      const botFog = ctx.createLinearGradient(0, H * 0.82, 0, H)
-      botFog.addColorStop(0,   'rgba(1,2,8,0.0)')
-      botFog.addColorStop(1,   'rgba(1,2,8,0.90)')
-      ctx.fillStyle = botFog
-      ctx.fillRect(0, 0, W, H)
+        if (alpha > 0.005) {
+          ctx.beginPath()
+          ctx.ellipse(rp.x, rp.y, rp.r, rp.r * 0.35, 0, 0, Math.PI * 2)
+          ctx.strokeStyle = `rgba(200,210,225,${alpha.toFixed(3)})`
+          ctx.lineWidth   = 1.2 * (1 - life * 0.7)
+          ctx.stroke()
+
+          /* Second anneau décalé */
+          if (rp.r > 12) {
+            ctx.beginPath()
+            ctx.ellipse(rp.x, rp.y, rp.r * 0.6, rp.r * 0.6 * 0.35, 0, 0, Math.PI * 2)
+            ctx.strokeStyle = `rgba(200,210,225,${(alpha * 0.5).toFixed(3)})`
+            ctx.lineWidth   = 0.8
+            ctx.stroke()
+          }
+        } else {
+          ripples.splice(i, 1)
+        }
+      }
+
+      /* Reflet lumineux autour du curseur */
+      if (mouse.x > 0) {
+        const rg = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 90)
+        rg.addColorStop(0,   'rgba(200,210,230,0.10)')
+        rg.addColorStop(0.4, 'rgba(150,165,190,0.04)')
+        rg.addColorStop(1,   'rgba(0,0,0,0)')
+        ctx.fillStyle = rg
+        ctx.fillRect(0, 0, W, H)
+      }
 
       t += 0.008
       animId = requestAnimationFrame(draw)
