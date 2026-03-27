@@ -5,20 +5,20 @@ import { useRef, useEffect } from 'react'
 
 /* ── 14 couches sur toute la hauteur de l'écran ───────────────────── */
 const LAYERS = [
-  { freq: 0.007, amp: 22, speed: 0.07, ph: 0.0,  y: 0.04 },
-  { freq: 0.011, amp: 18, speed: 0.10, ph: 1.3,  y: 0.12 },
-  { freq: 0.009, amp: 24, speed: 0.08, ph: 2.6,  y: 0.20 },
-  { freq: 0.014, amp: 16, speed: 0.14, ph: 0.9,  y: 0.28 },
-  { freq: 0.008, amp: 28, speed: 0.07, ph: 3.8,  y: 0.36 },
-  { freq: 0.016, amp: 14, speed: 0.17, ph: 1.5,  y: 0.44 },
-  { freq: 0.010, amp: 26, speed: 0.09, ph: 4.1,  y: 0.52 },
-  { freq: 0.013, amp: 20, speed: 0.12, ph: 2.2,  y: 0.59 },
-  { freq: 0.018, amp: 12, speed: 0.20, ph: 0.5,  y: 0.66 },
-  { freq: 0.008, amp: 30, speed: 0.06, ph: 3.3,  y: 0.73 },
-  { freq: 0.015, amp: 17, speed: 0.15, ph: 1.1,  y: 0.80 },
-  { freq: 0.010, amp: 23, speed: 0.10, ph: 4.7,  y: 0.86 },
-  { freq: 0.012, amp: 15, speed: 0.13, ph: 2.8,  y: 0.92 },
-  { freq: 0.009, amp: 20, speed: 0.08, ph: 0.3,  y: 0.97 },
+  { freq: 0.007, amp: 34, speed: 0.13, ph: 0.0,  y: 0.04 },
+  { freq: 0.011, amp: 28, speed: 0.18, ph: 1.3,  y: 0.12 },
+  { freq: 0.009, amp: 38, speed: 0.15, ph: 2.6,  y: 0.20 },
+  { freq: 0.014, amp: 26, speed: 0.24, ph: 0.9,  y: 0.28 },
+  { freq: 0.008, amp: 44, speed: 0.13, ph: 3.8,  y: 0.36 },
+  { freq: 0.016, amp: 22, speed: 0.28, ph: 1.5,  y: 0.44 },
+  { freq: 0.010, amp: 40, speed: 0.17, ph: 4.1,  y: 0.52 },
+  { freq: 0.013, amp: 32, speed: 0.21, ph: 2.2,  y: 0.59 },
+  { freq: 0.018, amp: 20, speed: 0.33, ph: 0.5,  y: 0.66 },
+  { freq: 0.008, amp: 46, speed: 0.11, ph: 3.3,  y: 0.73 },
+  { freq: 0.015, amp: 28, speed: 0.26, ph: 1.1,  y: 0.80 },
+  { freq: 0.010, amp: 36, speed: 0.18, ph: 4.7,  y: 0.86 },
+  { freq: 0.012, amp: 24, speed: 0.22, ph: 2.8,  y: 0.92 },
+  { freq: 0.009, amp: 32, speed: 0.14, ph: 0.3,  y: 0.97 },
 ]
 
 export default function WaterBackground() {
@@ -162,33 +162,34 @@ export default function WaterBackground() {
       })
 
       /* ── Courbes verticales (colonnes d'eau) ─────────────────────── */
-      const VCOLS = 12
+      const VCOLS = 18
       for (let ci = 0; ci < VCOLS; ci++) {
         const baseX  = (ci / (VCOLS - 1)) * W
-        const freq   = 0.007 + (ci % 3) * 0.003
-        const amp    = 14 + (ci % 4) * 6
-        const speed  = 0.06 + (ci % 5) * 0.02
-        const ph     = ci * 0.72
+        const freq   = 0.008 + (ci % 4) * 0.003
+        const amp    = 24 + (ci % 5) * 10
+        const speed  = 0.12 + (ci % 6) * 0.04
+        const ph     = ci * 0.88
         const progress = ci / (VCOLS - 1)
-        const brightness = 0.08 + progress * 0.10
+        const brightness = 0.09 + progress * 0.12
 
         /* Zone d'influence souris sur cette colonne */
         const xDist  = Math.abs(mouse.x - baseX)
-        const mInflX = Math.max(0, 1 - xDist / (W * 0.15))
+        const mInflX = Math.max(0, 1 - xDist / (W * 0.18))
 
         const vpts = []
-        const vstep = 4
+        const vstep = 3
         for (let y = 0; y <= H; y += vstep) {
           const p   = t * speed + ph
-          let dx    = Math.sin(y * freq + p)             * amp
-                    + Math.sin(y * freq * 1.6 - p * 0.5) * amp * 0.35
-                    + Math.sin(y * freq * 0.4 + p * 0.3) * amp * 0.18
+          let dx    = Math.sin(y * freq + p)              * amp
+                    + Math.sin(y * freq * 1.8 - p * 0.6)  * amp * 0.42
+                    + Math.sin(y * freq * 0.5 + p * 0.35) * amp * 0.22
+                    + Math.sin(y * freq * 2.5 + p * 0.8)  * amp * 0.12
 
           if (mInflX > 0) {
             const yDist2  = Math.abs(y - mouse.y)
-            const mInflY2 = Math.max(0, 1 - yDist2 / 220)
-            const push2   = Math.sin((y - mouse.y) * 0.025) * vel.x * 0.30 * mInflX * mInflY2
-            const dip2    = -Math.exp(-(yDist2**2) / (2 * 110**2)) * mInflX * 22
+            const mInflY2 = Math.max(0, 1 - yDist2 / 260)
+            const push2   = Math.sin((y - mouse.y) * 0.025) * vel.x * 0.45 * mInflX * mInflY2
+            const dip2    = -Math.exp(-(yDist2**2) / (2 * 130**2)) * mInflX * 32
             dx += push2 + dip2
           }
 
@@ -197,9 +198,9 @@ export default function WaterBackground() {
 
         ctx.beginPath()
         vpts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y))
-        const strokeAv = (brightness * 1.4 + mInflX * 0.18).toFixed(3)
+        const strokeAv = (brightness * 1.6 + mInflX * 0.22).toFixed(3)
         ctx.strokeStyle = `rgba(170,182,200,${strokeAv})`
-        ctx.lineWidth   = 0.6 + progress * 0.5
+        ctx.lineWidth   = 0.7 + progress * 0.6
         ctx.stroke()
       }
 
@@ -240,7 +241,7 @@ export default function WaterBackground() {
         ctx.fillRect(0, 0, W, H)
       }
 
-      t += 0.008
+      t += 0.014
       animId = requestAnimationFrame(draw)
     }
 
