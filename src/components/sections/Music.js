@@ -43,7 +43,7 @@ function SectionLabel({ children, mt = false }) {
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 1.4 }}
       style={{
         fontSize: '0.65rem',
         letterSpacing: '0.1em',
@@ -69,7 +69,7 @@ function VinylFlip() {
       ref={ref}
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
       style={{ display: 'flex', justifyContent: 'center', paddingBottom: '2rem' }}
     >
       {/* Wrapper — établit le contexte de perspective */}
@@ -89,7 +89,7 @@ function VinylFlip() {
             opacity: hovered ? [0.55, 1,    0.55] : [0.2, 0.45, 0.2],
             scale:   hovered ? [1.0,  1.16, 1.0 ] : [1.0, 1.08, 1.0],
           }}
-          transition={{ duration: hovered ? 1.9 : 3.5, repeat: Infinity, ease: 'easeInOut' }}
+          transition={{ duration: hovered ? 3.2 : 5.5, repeat: Infinity, ease: 'easeInOut' }}
           style={{
             position: 'absolute', inset: '-16%',
             borderRadius: '50%',
@@ -104,7 +104,7 @@ function VinylFlip() {
             opacity: hovered ? [0.45, 0.85, 0.45] : [0.1, 0.3, 0.1],
             scale:   hovered ? [1.08, 1.22, 1.08] : [1.05, 1.13, 1.05],
           }}
-          transition={{ duration: hovered ? 2.4 : 4.8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+          transition={{ duration: hovered ? 3.8 : 7.2, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
           style={{
             position: 'absolute', inset: '-12%',
             borderRadius: '50%',
@@ -117,7 +117,7 @@ function VinylFlip() {
         {/* ── Lévitation ──────────────────────────────────────────── */}
         <motion.div
           animate={{ y: [0, -12, 0] }}
-          transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+          transition={{ duration: 8.5, repeat: Infinity, ease: 'easeInOut' }}
           style={{
             position: 'absolute', inset: 0,
             transformStyle: 'preserve-3d',
@@ -128,7 +128,7 @@ function VinylFlip() {
           {/* ── Flipper ─────────────────────────────────────────────── */}
           <motion.div
             animate={{ rotateY: flipped ? 180 : 0 }}
-            transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
             style={{
               width: '100%', height: '100%',
               position: 'relative',
@@ -203,9 +203,9 @@ function LargeEmbed({ item }) {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y: 60, filter: 'blur(6px)' }}
+      animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+      transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
       style={{
         borderRadius: 6,
         overflow: 'hidden',
@@ -235,9 +235,9 @@ function SmallEmbed({ item, index }) {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay: (index % 4) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y: 45, filter: 'blur(5px)' }}
+      animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+      transition={{ duration: 1.4, delay: (index % 4) * 0.15, ease: [0.22, 1, 0.36, 1] }}
       style={{
         borderRadius: 6,
         overflow: 'hidden',
@@ -267,9 +267,9 @@ function ExclusiveEmbed({ item, index }) {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y: 45, filter: 'blur(5px)' }}
+      animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+      transition={{ duration: 1.4, delay: index * 0.2, ease: [0.22, 1, 0.36, 1] }}
       style={{ position: 'relative' }}
     >
       <div style={{
@@ -378,7 +378,7 @@ export default function Music() {
         <motion.div
           initial={{ scaleX: 50 }}
           animate={titleInView ? { scaleX: 1 } : { scaleX: 50 }}
-          transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          transition={{ duration: 3.8, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           style={{ width: 48, height: 1, background: '#4a8fff', marginBottom: '1.2rem', transformOrigin: 'left' }}
         />
         <motion.h2
@@ -401,7 +401,7 @@ export default function Music() {
             opacity: titleInView
               ? { duration: 5.0, delay: 0.3, times: [0, 0.06, 0.11, 0.17, 0.24, 0.32, 0.39, 0.46, 0.54, 0.61, 0.78, 1] }
               : { duration: 0.6 },
-            y: { duration: 1.6, delay: 0.2 },
+            y: { duration: 2.6, delay: 0.2 },
             filter: glow.glowing
               ? { duration: 3, repeat: Infinity, ease: 'easeInOut' }
               : { duration: 1.2, ease: 'easeOut' },
@@ -420,9 +420,9 @@ export default function Music() {
           {t.music.title}
         </motion.h2>
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={titleInView ? { opacity: 1 } : {}}
-          transition={{ duration: 1.6, delay: 0.5 }}
+          initial={{ opacity: 0, filter: 'blur(8px)', y: 10 }}
+          animate={titleInView ? { opacity: 1, filter: 'blur(0px)', y: 0 } : {}}
+          transition={{ duration: 2.6, delay: 0.6 }}
           style={{ fontSize: '0.75rem', letterSpacing: '0.04em', color: 'rgba(255,255,255,0.35)', marginTop: '0.6rem' }}
         >
           {t.music.subtitle}
@@ -443,7 +443,7 @@ export default function Music() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.4 }}
+            transition={{ duration: 2, delay: 0.6 }}
             style={{ marginTop: '1.6rem', paddingLeft: '0.2rem' }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>

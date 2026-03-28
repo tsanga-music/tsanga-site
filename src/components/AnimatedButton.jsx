@@ -4,8 +4,8 @@ export default function AnimatedButton({ children, onClick, style }) {
   return (
     <motion.button
       onClick={onClick}
-      animate={{ scale: [1, 1.04, 1] }}
-      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', repeatType: 'loop' }}
+      animate={{ scale: [1, 1.03, 1] }}
+      transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', repeatType: 'loop' }}
       whileHover={{
         y: -2,
         boxShadow: '0 0 22px rgba(120, 100, 255, 0.45), 0 0 6px rgba(74,143,255,0.6)',

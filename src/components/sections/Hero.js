@@ -80,7 +80,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2.0, delay: 2.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 3.4, delay: 2.6, ease: [0.22, 1, 0.36, 1] }}
           style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.9rem' }}
         >
           <div style={{
@@ -118,7 +118,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.6, delay: 4.0, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 2.8, delay: 4.0, ease: [0.22, 1, 0.36, 1] }}
           style={{ marginTop: '0.5rem' }}
         >
           <AnimatedButton
