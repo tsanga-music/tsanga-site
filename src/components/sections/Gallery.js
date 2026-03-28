@@ -78,6 +78,9 @@ function Lightbox({ photos, index, direction, onClose, onPrev, onNext }) {
 
   return (
     <motion.div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Photo ${index + 1} sur ${photos.length} — ${photos[index].label}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -92,17 +95,22 @@ function Lightbox({ photos, index, direction, onClose, onPrev, onNext }) {
       }}
     >
       {/* Fermer */}
-      <button onClick={onClose} style={{
-        position: 'fixed', top: '1.5rem', right: '2rem',
-        background: 'none', border: 'none',
-        color: 'rgba(255,255,255,0.55)', fontSize: '2rem',
-        cursor: 'none', lineHeight: 1, padding: '0.2rem 0.5rem',
-        zIndex: 2001,
-      }}>✕</button>
+      <button
+        onClick={onClose}
+        aria-label="Fermer la galerie"
+        style={{
+          position: 'fixed', top: '1.5rem', right: '2rem',
+          background: 'none', border: 'none',
+          color: 'rgba(255,255,255,0.55)', fontSize: '2rem',
+          cursor: 'none', lineHeight: 1, padding: '0.2rem 0.5rem',
+          zIndex: 2001,
+        }}
+      >✕</button>
 
       {/* Bouton zoom */}
       <button
         onClick={(e) => { e.stopPropagation(); setZoomed(z => !z); }}
+        aria-label={zoomed ? 'Réduire (×1)' : 'Agrandir (×2)'}
         style={{
           position: 'fixed', top: '1.5rem', right: '5rem',
           background: 'rgba(255,255,255,0.06)',
@@ -122,6 +130,7 @@ function Lightbox({ photos, index, direction, onClose, onPrev, onNext }) {
       {index > 0 && (
         <button
           onClick={(e) => { e.stopPropagation(); onPrev(); }}
+          aria-label="Photo précédente"
           style={{ position: 'fixed', left: '1.5rem', top: '50%', transform: 'translateY(-50%)', ...btnBase }}
         >←</button>
       )}
@@ -130,6 +139,7 @@ function Lightbox({ photos, index, direction, onClose, onPrev, onNext }) {
       {index < photos.length - 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); onNext(); }}
+          aria-label="Photo suivante"
           style={{ position: 'fixed', right: '1.5rem', top: '50%', transform: 'translateY(-50%)', ...btnBase }}
         >→</button>
       )}
@@ -254,7 +264,7 @@ export default function Gallery() {
           style={{
             fontSize: '0.75rem',
             letterSpacing: '0.04em',
-            color: 'rgba(255,255,255,0.35)',
+            color: 'rgba(255,255,255,0.55)',
             marginTop: '0.6rem',
           }}
         >
@@ -341,7 +351,7 @@ export default function Gallery() {
         color: 'rgba(255,255,255,0.2)',
         marginBottom: '3rem',
       }}>
-        cliquer pour plein écran · ×2 pour zoomer
+        {t.gallery.hint}
       </p>
 
       {/* Credits */}

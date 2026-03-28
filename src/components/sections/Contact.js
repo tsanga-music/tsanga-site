@@ -5,7 +5,7 @@ import { Send, Mail, Instagram, Youtube } from 'lucide-react';
 import navLogoSrc from '../../tsangalogosansfond.png';
 import { useSectionGlow } from '../../hooks/useSectionGlow';
 
-function InputField({ label, type = 'text', multiline = false, value, onChange }) {
+function InputField({ id, label, type = 'text', multiline = false, value, onChange }) {
   const [focused, setFocused] = useState(false);
 
   const commonStyle = {
@@ -26,18 +26,22 @@ function InputField({ label, type = 'text', multiline = false, value, onChange }
 
   return (
     <div style={{ position: 'relative' }}>
-      <label style={{
-        display: 'block',
-        fontSize: '0.65rem',
-        letterSpacing: '0.04em',
-        color: focused ? '#4a8fff' : 'rgba(255,255,255,0.35)',
-        marginBottom: '0.4rem',
-        transition: 'color 0.2s',
-      }}>
+      <label
+        htmlFor={id}
+        style={{
+          display: 'block',
+          fontSize: '0.65rem',
+          letterSpacing: '0.04em',
+          color: focused ? '#4a8fff' : 'rgba(255,255,255,0.55)',
+          marginBottom: '0.4rem',
+          transition: 'color 0.2s',
+        }}
+      >
         {label}
       </label>
       {multiline ? (
         <textarea
+          id={id}
           rows={5}
           value={value}
           onChange={onChange}
@@ -47,6 +51,7 @@ function InputField({ label, type = 'text', multiline = false, value, onChange }
         />
       ) : (
         <input
+          id={id}
           type={type}
           value={value}
           onChange={onChange}
@@ -140,7 +145,7 @@ export default function Contact() {
               initial={{ opacity: 0 }}
               animate={titleInView ? { opacity: 1 } : {}}
               transition={{ duration: 0.8, delay: 0.3 }}
-              style={{ fontSize: '0.75rem', letterSpacing: '0.04em', color: 'rgba(255,255,255,0.35)', marginTop: '0.6rem' }}
+              style={{ fontSize: '0.75rem', letterSpacing: '0.04em', color: 'rgba(255,255,255,0.55)', marginTop: '0.6rem' }}
             >
               {t.contact.subtitle}
             </motion.p>
@@ -196,7 +201,7 @@ export default function Contact() {
           >
             {[
               { Icon: Instagram, label: '@tsanga_music', href: 'https://www.instagram.com/tsanga_music/' },
-              { Icon: Youtube, label: 'Lost My Way', href: 'https://youtu.be/sGycQ6l_Lc8?si=2y4b1WRvhweHPsFJ' },
+              { Icon: Youtube, label: t.contact.youtube, href: 'https://youtu.be/sGycQ6l_Lc8?si=2y4b1WRvhweHPsFJ' },
             ].map(({ Icon, label, href }) => (
               <motion.a
                 key={label}
@@ -236,17 +241,20 @@ export default function Contact() {
           style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}
         >
           <InputField
+            id="contact-name"
             label={t.contact.name}
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
           />
           <InputField
+            id="contact-email"
             label={t.contact.email}
             type="email"
             value={form.email}
             onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
           />
           <InputField
+            id="contact-message"
             label={t.contact.message}
             multiline
             value={form.message}
@@ -276,7 +284,7 @@ export default function Contact() {
             }}
           >
             <Send size={14} />
-            {sent ? '✓ Envoyé' : t.contact.send}
+            {sent ? `✓ ${t.contact.sent}` : t.contact.send}
           </motion.button>
         </motion.form>
       </div>
