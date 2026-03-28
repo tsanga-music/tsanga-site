@@ -73,6 +73,7 @@ function DateRow({ date, index }) {
             <motion.button
               whileHover={{ background: 'rgba(74,143,255,0.2)' }}
               whileTap={{ scale: 0.95 }}
+              aria-label={`Tickets — ${date.city}`}
               style={{
                 padding: '6px 14px',
                 background: 'transparent',
@@ -172,7 +173,7 @@ export default function Lives() {
           initial={{ opacity: 0, filter: 'blur(8px)', y: 10 }}
           animate={titleInView ? { opacity: 1, filter: 'blur(0px)', y: 0 } : {}}
           transition={{ duration: 1.8, delay: 0.5 }}
-          style={{ fontSize: '0.75rem', letterSpacing: '0.04em', color: 'rgba(255,255,255,0.35)', marginTop: '0.6rem' }}
+          style={{ fontSize: '0.75rem', letterSpacing: '0.04em', color: 'rgba(255,255,255,0.55)', marginTop: '0.6rem' }}
         >
           {t.lives.subtitle}
         </motion.p>

@@ -47,7 +47,7 @@ function SectionLabel({ children, mt = false }) {
       style={{
         fontSize: '0.65rem',
         letterSpacing: '0.1em',
-        color: 'rgba(255,255,255,0.3)',
+        color: 'rgba(255,255,255,0.5)',
         marginTop: mt ? '3rem' : 0,
         marginBottom: '1rem',
       }}
@@ -59,6 +59,7 @@ function SectionLabel({ children, mt = false }) {
 
 /* ── Pochette vinyle flip recto/verso ─────────────────────────────── */
 function VinylFlip() {
+  const { t } = useLang();
   const ref    = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const [flipped, setFlipped] = useState(false);
@@ -188,7 +189,7 @@ function VinylFlip() {
             margin: 0,
           }}
         >
-          {flipped ? '← recto' : 'verso →'}
+          {flipped ? `← ${t.music.recto}` : `${t.music.verso} →`}
         </motion.p>
       </div>
     </motion.div>
@@ -199,6 +200,8 @@ function VinylFlip() {
 function LargeEmbed({ item }) {
   const ref    = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => { if (inView && !loaded) setLoaded(true); }, [inView, loaded]);
 
   return (
     <motion.div
@@ -211,18 +214,22 @@ function LargeEmbed({ item }) {
         overflow: 'hidden',
         border: '1px solid rgba(255,255,255,0.07)',
         background: 'rgba(255,255,255,0.02)',
+        minHeight: 450,
       }}
     >
-      <iframe
-        title={item.label}
-        width="100%"
-        height="450"
-        scrolling="no"
-        frameBorder="no"
-        allow="autoplay"
-        src={scUrl(item.path, true)}
-        style={{ display: 'block' }}
-      />
+      {loaded && (
+        <iframe
+          title={item.label}
+          width="100%"
+          height="450"
+          scrolling="no"
+          frameBorder="no"
+          allow="autoplay"
+          src={scUrl(item.path, true)}
+          style={{ display: 'block' }}
+          loading="lazy"
+        />
+      )}
     </motion.div>
   );
 }
@@ -231,6 +238,8 @@ function LargeEmbed({ item }) {
 function SmallEmbed({ item, index }) {
   const ref    = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => { if (inView && !loaded) setLoaded(true); }, [inView, loaded]);
 
   return (
     <motion.div
@@ -243,26 +252,33 @@ function SmallEmbed({ item, index }) {
         overflow: 'hidden',
         border: '1px solid rgba(255,255,255,0.06)',
         background: 'rgba(255,255,255,0.015)',
+        minHeight: 166,
       }}
     >
-      <iframe
-        title={item.label}
-        width="100%"
-        height="166"
-        scrolling="no"
-        frameBorder="no"
-        allow="autoplay"
-        src={scUrl(item.path, false)}
-        style={{ display: 'block' }}
-      />
+      {loaded && (
+        <iframe
+          title={item.label}
+          width="100%"
+          height="166"
+          scrolling="no"
+          frameBorder="no"
+          allow="autoplay"
+          src={scUrl(item.path, false)}
+          style={{ display: 'block' }}
+          loading="lazy"
+        />
+      )}
     </motion.div>
   );
 }
 
 /* ── Embed exclusif 166px + badge ────────────────────────────────── */
 function ExclusiveEmbed({ item, index }) {
+  const { t } = useLang();
   const ref    = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => { if (inView && !loaded) setLoaded(true); }, [inView, loaded]);
 
   return (
     <motion.div
@@ -283,23 +299,27 @@ function ExclusiveEmbed({ item, index }) {
         backdropFilter: 'blur(6px)',
         boxShadow: '0 0 12px rgba(255,40,90,0.5)',
       }}>
-        Exclusif
+        {t.music.exclusif}
       </div>
       <div style={{
         borderRadius: 6, overflow: 'hidden',
         border: '1px solid rgba(255,40,90,0.2)',
         background: 'rgba(255,255,255,0.015)',
+        minHeight: 166,
       }}>
-        <iframe
-          title={item.label}
-          width="100%"
-          height="166"
-          scrolling="no"
-          frameBorder="no"
-          allow="autoplay"
-          src={scUrl(item.path, false)}
-          style={{ display: 'block' }}
-        />
+        {loaded && (
+          <iframe
+            title={item.label}
+            width="100%"
+            height="166"
+            scrolling="no"
+            frameBorder="no"
+            allow="autoplay"
+            src={scUrl(item.path, false)}
+            style={{ display: 'block' }}
+            loading="lazy"
+          />
+        )}
       </div>
     </motion.div>
   );
@@ -423,7 +443,7 @@ export default function Music() {
           initial={{ opacity: 0, filter: 'blur(8px)', y: 10 }}
           animate={titleInView ? { opacity: 1, filter: 'blur(0px)', y: 0 } : {}}
           transition={{ duration: 2.6, delay: 0.6 }}
-          style={{ fontSize: '0.75rem', letterSpacing: '0.04em', color: 'rgba(255,255,255,0.35)', marginTop: '0.6rem' }}
+          style={{ fontSize: '0.75rem', letterSpacing: '0.04em', color: 'rgba(255,255,255,0.55)', marginTop: '0.6rem' }}
         >
           {t.music.subtitle}
         </motion.p>
@@ -510,7 +530,7 @@ export default function Music() {
       </div>
 
       {/* ── Exclusifs ──────────────────────────────────────────────── */}
-      <SectionLabel mt>Exclusifs</SectionLabel>
+      <SectionLabel mt>{t.music.exclusifs}</SectionLabel>
       <div className="embeds-grid">
         {EXCLUSIVES.map((item, i) => (
           <ExclusiveEmbed key={item.path} item={item} index={i} />

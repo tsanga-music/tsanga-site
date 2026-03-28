@@ -15,11 +15,16 @@ const de = {
   gallery: {
     title: 'Galerie',
     subtitle: 'Visuelle Fragmente',
+    hint: 'Klicken zum Vergrößern · ×2 zum Zoomen',
   },
   music: {
     title: 'Musik',
     subtitle: 'Diskografie',
     listen: 'Anhören',
+    exclusif: 'Exklusiv',
+    exclusifs: 'Exklusiv',
+    verso: 'verso',
+    recto: 'recto',
     releases: [
       { title: 'Cendres', year: '2024', type: 'Album', tracks: 10 },
       { title: 'Fractures', year: '2023', type: 'EP', tracks: 5 },
@@ -60,9 +65,11 @@ const de = {
     email: 'E-Mail',
     message: 'Nachricht',
     send: 'Senden',
+    sent: 'E-Mail bereit',
     booking: 'Booking',
     press: 'Presse',
     management: 'Management',
+    youtube: 'Lost My Way',
   },
 };
 

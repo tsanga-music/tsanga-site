@@ -105,7 +105,7 @@ export default function Hero() {
             <p style={{
               fontSize: '0.8rem',
               letterSpacing: '0.14em',
-              color: 'rgba(255,255,255,0.32)',
+              color: 'rgba(255,255,255,0.55)',
               fontWeight: 400,
               fontStyle: 'normal',
             }}>
@@ -118,7 +118,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2.8, delay: 4.0, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 2.8, delay: 1.8, ease: [0.22, 1, 0.36, 1] }}
           style={{ marginTop: '0.5rem' }}
         >
           <AnimatedButton
@@ -126,7 +126,7 @@ export default function Hero() {
             style={{
               padding: '1rem 2.5rem',
               background: 'transparent',
-              border: 'none',
+              border: '1px solid rgba(255,255,255,0.18)',
               color: '#fff',
               fontSize: '1rem',
               letterSpacing: '0.04em',
