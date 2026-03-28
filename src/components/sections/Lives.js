@@ -24,7 +24,7 @@ function DateRow({ date, index }) {
       ref={ref}
       initial={{ opacity: 0, x: -30 }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.7, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 1.4, delay: index * 0.15, ease: [0.22, 1, 0.36, 1] }}
     >
       <motion.div
         whileHover={{ background: 'rgba(74,143,255,0.04)', borderColor: 'rgba(74,143,255,0.18)' }}
@@ -127,7 +127,7 @@ export default function Lives() {
         <motion.div
           initial={{ scaleX: 50 }}
           animate={titleInView ? { scaleX: 1 } : { scaleX: 50 }}
-          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+          transition={{ duration: 2.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           style={{ width: 48, height: 1, background: '#4a8fff', marginBottom: '1.2rem', transformOrigin: 'left' }}
         />
         <motion.h2
@@ -150,7 +150,7 @@ export default function Lives() {
             opacity: titleInView
               ? { duration: 3.5, delay: 0.2, times: [0, 0.06, 0.11, 0.17, 0.24, 0.32, 0.39, 0.46, 0.54, 0.61, 0.78, 1] }
               : { duration: 0.4 },
-            y: { duration: 0.8, delay: 0.15 },
+            y: { duration: 1.8, delay: 0.2 },
             filter: glow.glowing
               ? { duration: 3, repeat: Infinity, ease: 'easeInOut' }
               : { duration: 1.2, ease: 'easeOut' },
@@ -169,9 +169,9 @@ export default function Lives() {
           {t.lives.title}
         </motion.h2>
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={titleInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          initial={{ opacity: 0, filter: 'blur(8px)', y: 10 }}
+          animate={titleInView ? { opacity: 1, filter: 'blur(0px)', y: 0 } : {}}
+          transition={{ duration: 1.8, delay: 0.5 }}
           style={{ fontSize: '0.75rem', letterSpacing: '0.04em', color: 'rgba(255,255,255,0.35)', marginTop: '0.6rem' }}
         >
           {t.lives.subtitle}
@@ -190,7 +190,7 @@ export default function Lives() {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.5 }}
+        transition={{ duration: 1.8, delay: 0.6 }}
         className="booking-cta"
         style={{
           marginTop: '3rem',

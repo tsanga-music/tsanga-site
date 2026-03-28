@@ -39,11 +39,11 @@ export function useScrollAnimation(options = {}) {
     const blur = options.blur ?? 0;
     const ease = options.ease ?? (blur > 0 ? 'blurEase' : 'power2.out');
 
-    const fromVars = { opacity: 0, y: options.y ?? 40 };
+    const fromVars = { opacity: 0, y: options.y ?? 60 };
     const toVars   = {
       opacity: 1,
       y: 0,
-      duration: options.duration ?? 1.8,
+      duration: options.duration ?? 2.8,
       delay:    options.delay    ?? 0,
       ease,
       scrollTrigger: {

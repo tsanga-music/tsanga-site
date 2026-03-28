@@ -81,7 +81,7 @@ function Lightbox({ photos, index, direction, onClose, onPrev, onNext }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
+      transition={{ duration: 0.5 }}
       onClick={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 2000,
@@ -154,7 +154,7 @@ function Lightbox({ photos, index, direction, onClose, onPrev, onNext }) {
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
             src={photos[index].src}
             alt={photos[index].label}
             style={{
@@ -206,7 +206,7 @@ export default function Gallery() {
         <motion.div
           initial={{ scaleX: 50 }}
           animate={titleInView ? { scaleX: 1 } : { scaleX: 50 }}
-          transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          transition={{ duration: 3.8, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           style={{ width: 48, height: 1, background: '#4a8fff', marginBottom: '1.2rem', transformOrigin: 'left' }}
         />
         <motion.h2
@@ -229,7 +229,7 @@ export default function Gallery() {
             opacity: titleInView
               ? { duration: 5.0, delay: 0.3, times: [0, 0.06, 0.11, 0.17, 0.24, 0.32, 0.39, 0.46, 0.54, 0.61, 0.78, 1] }
               : { duration: 0.6 },
-            y: { duration: 1.6, delay: 0.2 },
+            y: { duration: 2.6, delay: 0.2 },
             filter: glow.glowing
               ? { duration: 3, repeat: Infinity, ease: 'easeInOut' }
               : { duration: 1.2, ease: 'easeOut' },
@@ -248,9 +248,9 @@ export default function Gallery() {
           {t.gallery.title}
         </motion.h2>
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={titleInView ? { opacity: 1 } : {}}
-          transition={{ duration: 1.6, delay: 0.5 }}
+          initial={{ opacity: 0, filter: 'blur(8px)', y: 10 }}
+          animate={titleInView ? { opacity: 1, filter: 'blur(0px)', y: 0 } : {}}
+          transition={{ duration: 2.6, delay: 0.6 }}
           style={{
             fontSize: '0.75rem',
             letterSpacing: '0.04em',
@@ -272,13 +272,13 @@ export default function Gallery() {
           overflow: hidden;
           cursor: none;
           opacity: 0.4;
-          transition: opacity 0.4s;
+          transition: opacity 0.9s;
         }
         .tsanga-swiper .swiper-slide-active { opacity: 1; }
         .tsanga-swiper .swiper-slide img {
           width: 100%; height: 100%; object-fit: cover; display: block;
           filter: grayscale(85%) brightness(0.9);
-          transition: filter 0.55s ease;
+          transition: filter 1.2s ease;
         }
         .tsanga-swiper .swiper-slide:hover img,
         .tsanga-swiper .swiper-slide-active img {
@@ -349,7 +349,7 @@ export default function Gallery() {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 1, delay: 0.3 }}
+        transition={{ duration: 2.2, delay: 0.5 }}
         style={{
           marginTop: '1rem',
           paddingTop: '2rem',

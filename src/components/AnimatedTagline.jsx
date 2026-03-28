@@ -18,7 +18,7 @@ export default function AnimatedTagline({ style }) {
   useEffect(() => {
     const id = setInterval(() => {
       setIndex(i => (i + 1) % phrases.length);
-    }, 5500);
+    }, 7000);
     return () => clearInterval(id);
   }, []);
 
@@ -35,10 +35,10 @@ export default function AnimatedTagline({ style }) {
       <AnimatePresence mode="wait">
         <motion.p
           key={index}
-          initial={{ opacity: 0, y: 12, filter: 'blur(4px)' }}
+          initial={{ opacity: 0, y: 18, filter: 'blur(10px)' }}
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, y: -12, filter: 'blur(4px)' }}
-          transition={{ duration: 1.6, ease: 'easeInOut' }}
+          exit={{ opacity: 0, y: -18, filter: 'blur(10px)' }}
+          transition={{ duration: 2.4, ease: 'easeInOut' }}
           style={{
             position: 'absolute',
             width: '100%',
